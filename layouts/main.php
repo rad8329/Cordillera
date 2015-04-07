@@ -12,9 +12,8 @@
  */
 
 use \cordillera\base\Application;
-use \cordillera\helpers\Url;
 
-/** @var string $content Content of buffer */
+/** @var string $content */
 /** @var \cordillera\middlewares\Layout $this */
 ?>
 <!DOCTYPE html>
@@ -38,7 +37,7 @@ use \cordillera\helpers\Url;
 </head>
 <body>
 <nav class="navbar navbar-default">
-    <div class="container-fluid">
+    <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
@@ -50,32 +49,9 @@ use \cordillera\helpers\Url;
             </button>
             <a class="navbar-brand" href="<?php echo Application::getRequest()->home ?>">Cordillera framework</a>
         </div>
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                <li id="link_1">
-                    <a href="<?php echo cordillera\helpers\Url::relative("examples/routes/index") ?>">Google MAPS API</a>
-                </li>
-                <?php if (!Application::getAuth()->id): ?>
-                    <li id="link_2">
-                        <a href="<?php echo Url::relative("examples/site/login") ?>">
-                            <?php echo Application::getLang()->translate('Login') ?>
-                        </a>
-                    </li>
-                <?php else: ?>
-                    <li id="link_3">
-                        <a href="<?php echo Url::relative("examples/site/logout") ?>">
-                            <?php echo Application::getLang()->translate(
-                                'Logout (%s)', [Application::getAuth()->data['username']]
-                            ) ?>
-                        </a>
-                    </li>
-                <?php endif ?>
-            </ul>
-        </div>
         <!-- /.navbar-collapse -->
     </div>
-    <!-- /.container-fluid -->
+    <!-- /.container -->
 </nav>
 <?php if (Application::getSession()->get("flash.success")): ?>
     <div class="container">

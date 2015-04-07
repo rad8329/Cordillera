@@ -11,8 +11,12 @@
  * Made with love in Medellín
  */
 
-namespace cordillera\middlewares;
+/** @var \cordillera\middlewares\View $this */
+?>
+<div class="container">
+    <div class="jumbotron">
+        <h1>Welcome</h1>
 
-/**
- * @TODO: Logic for log handler
- */
+        <p>Cordillera framework is ready to work</p>
+    </div>
+</div>

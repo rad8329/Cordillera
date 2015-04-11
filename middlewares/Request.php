@@ -78,6 +78,11 @@ class Request
     public $salt = "";
 
     /**
+     * @var array
+     */
+    public static $payload = [];
+
+    /**
      * @param Session $session
      * @param bool $csrf
      */
@@ -148,11 +153,35 @@ class Request
 
 
     /**
+     * @param string $name
+     * @param mixed $default
      * @return mixed
      */
-    public static function payload()
+    public static function payload($name, $default = null)
     {
-        return json_decode(file_get_contents('php://input'));
+        if (!static::$payload) {
+            static::$payload = json_decode(file_get_contents('php://input'), true);
+            dump(static::$payload);
+        }
+
+        $parsed = explode('.', $name);
+
+        $result = static::$payload;
+
+        while ($parsed) {
+            $next = array_shift($parsed);
+            $next_crypted = Crypt::requestVar($next);
+
+            if (isset($result[$next])) {
+                $result = $result[$next];
+            } elseif ($next_crypted != $next && isset($result[$next_crypted])) {
+                $result = $result[$next_crypted];
+            } else {
+                return $default;
+            }
+        }
+
+        return $result;
     }
 
     /**

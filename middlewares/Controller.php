@@ -155,14 +155,14 @@ class Controller implements ControllerIterface
         if (Application::getConfig()->get("request.csrf") && Request::isPost() && !$this->rest) {
             // If the CSRF token is enabled, and is post method request
             $request = Application::getRequest();
-            $payload = Request::payload();
-            $token_id = Crypt::requestVar(Application::getRequest()->csrf_id);
+            $payload = Request::payload(Application::getRequest()->csrf_id);
+            $post = Request::post(Application::getRequest()->csrf_id);
 
             if (
                 // POST data
-                (empty($payload) && Request::post(Application::getRequest()->csrf_id) != $request->csrf_value) ||
+                (empty($payload) && $post != $request->csrf_value) ||
                 // Payload data
-                (!empty($payload) && isset($payload->{$token_id}) && $payload->{$token_id} != $request->csrf_value)
+                (!empty($payload) && $payload != $request->csrf_value)
             ) {
                 throw new Exception(Application::getLang()->translate("Bad request"), 400, Exception::BADREQUEST);
             }

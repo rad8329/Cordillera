@@ -306,8 +306,11 @@ abstract class ActiveRecord
 
             $sql .= " WHERE {$pk_condition}";
 
+            $this->getDb()->beginTransaction();
             $stmt = $this->getDb()->prepare($sql);
             $stmt->execute($params);
+            $this->getDb()->commit();
+
             $this->setDirty(false);
             $stmt->closeCursor();
         }
@@ -337,15 +340,18 @@ abstract class ActiveRecord
 
             $sql .= implode(',', $data);
 
+            $this->getDb()->beginTransaction();
             $stmt = $this->getDb()->prepare($sql);
             $stmt->execute($params);
+            $last_insert_id = $this->getDb()->lastInsertId();
+            $this->getDb()->commit();
 
             if (is_array($pk_name)) {
                 /**
                  * @TODO: Composite PK
                  */
             } else {
-                $this->{$pk_name} = $this->getDb()->lastInsertId();
+                $this->{$pk_name} = $last_insert_id;
             }
 
             $this->setDirty(false);
@@ -377,8 +383,11 @@ abstract class ActiveRecord
 
         $sql .= " WHERE {$pk_condition}";
 
+        $this->getDb()->beginTransaction();
         $stmt = $this->getDb()->prepare($sql);
         $stmt->execute($params);
+        $this->getDb()->commit();
+
         $stmt->closeCursor();
 
         return true;

@@ -66,6 +66,14 @@ trait Model
     }
 
     /**
+     * @return array
+     */
+    public function getAllErrors()
+    {
+        return $this->_errors;
+    }
+
+    /**
      * @param string $name
      * @return string
      */

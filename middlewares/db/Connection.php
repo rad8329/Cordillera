@@ -90,6 +90,7 @@ class Connection extends PDO
     public function execute(array $input_parameters = null)
     {
         try {
+            //$this->getDb()->beginTransaction();
             return $this->execute($input_parameters);
         } catch (\PDOException $e) {
             throw new Exception($e->getMessage(), 500, Exception::SQL);

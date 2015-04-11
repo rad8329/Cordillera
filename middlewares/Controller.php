@@ -15,7 +15,6 @@ namespace cordillera\middlewares;
 
 use cordillera\base\Application;
 use cordillera\base\Cordillera;
-use cordillera\helpers\Crypt;
 use cordillera\base\interfaces\Controller as ControllerIterface;
 
 class Controller implements ControllerIterface

@@ -161,7 +161,6 @@ class Request
     {
         if (!static::$payload) {
             static::$payload = json_decode(file_get_contents('php://input'), true);
-            dump(static::$payload);
         }
 
         $parsed = explode('.', $name);

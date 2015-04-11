@@ -237,6 +237,50 @@ abstract class ActiveRecord
     }
 
     /**
+     * @param Query|array|bool $args
+     * @return int
+     * @throws Exception
+     */
+    public static function count($args = false)
+    {
+        /**
+         * @var ActiveRecord $model
+         */
+        $query = null;
+        $model = new static();
+
+        if ($args && $args instanceof Query) {
+            $query = $args;
+            if (empty($query->from)) {
+                $query->addFrom($model->getTableName() . " T");
+            }
+            $query->select = "COUNT(*)";
+        } elseif ($args && is_array($args)) {
+            if (!isset($args['from'])) {
+                $args['from'] = $model->getTableName() . " T";
+            }
+            $query = new Query($args);
+            $query->select = "COUNT(*)";
+        } elseif (!$args) {
+            $query = new Query(
+                [
+                    'from' => $model->getTableName() . " T",
+                    'select' => "COUNT(*)"
+                ]);
+        } else {
+
+            throw new Exception(Application::getLang()->translate("Bad arguments"), 500, Exception::BADARGUMENTS);
+        }
+
+        $stmt = $model->getDb()->prepare($query->toSql());
+        $stmt->execute($query->params);
+        $records = $stmt->fetchColumn();
+        $stmt->closeCursor();
+
+        return $records;
+    }
+
+    /**
      * @param array $data
      */
     public function bind($data = [])

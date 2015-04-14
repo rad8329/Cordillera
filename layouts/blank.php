@@ -18,3 +18,4 @@ use cordillera\middlewares\Layout;
 
 echo $this->publishRegisteredFiles();
 echo $content;
+echo $this->publishRegisteredFiles(self::END_SCOPE);

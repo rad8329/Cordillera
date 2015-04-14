@@ -20,6 +20,15 @@ use cordillera\base\interfaces\Layout as LayoutInterface;
 class Layout implements Display, LayoutInterface
 {
     /**
+     * Scope for publish the registered files on head
+     */
+    const HEAD_SCOPE = 'head';
+
+    /**
+     * Scope for publish the registered files on end body
+     */
+    const END_SCOPE = 'end';
+    /**
      * @var string
      */
     protected $_template = "";
@@ -38,7 +47,10 @@ class Layout implements Display, LayoutInterface
      * @var array
      */
     public $assets = [
-        'js' => [],
+        'js' => [
+            Layout::HEAD_SCOPE => [],
+            Layout::END_SCOPE => [],
+        ],
         'css' => []
     ];
 
@@ -99,11 +111,19 @@ class Layout implements Display, LayoutInterface
     }
 
     /**
-     * @param string $file A valid js file name
+     * @param string $file valid js file name
+     * @param string $scope valid scope name
      */
-    public function registerJsFile($file)
+    public function registerJsFile($file, $scope = Layout::HEAD_SCOPE)
     {
-        $this->assets['js'][md5($file)] = $file;
+		$file_id = md5($file);
+        if ($scope == Layout::HEAD_SCOPE) {
+            unset($this->assets['js'][Layout::END_SCOPE][$file_id]);
+        } else {
+            unset($this->assets['js'][Layout::HEAD_SCOPE][$file_id]);
+        }
+
+        $this->assets['js'][$scope][$file_id] = $file;
     }
 
     /**
@@ -115,21 +135,24 @@ class Layout implements Display, LayoutInterface
     }
 
     /**
+     * @param string $scope valid scope name
      * @return string Content (HTML) of js and css tags
      */
-    public function publishRegisteredFiles()
+    public function publishRegisteredFiles($scope = Layout::HEAD_SCOPE)
     {
         $tags = "";
 
-        foreach ($this->assets["js"] as $js) {
+        foreach ($this->assets["js"][$scope] as $js) {
             if ($js) {
                 $tags .= "\n<script src=\"$js\" type=\"text/javascript\"></script>";
             }
         }
 
-        foreach ($this->assets["css"] as $css) {
-            if ($css) {
-                $tags .= "\n<link rel=\"stylesheet\" type=\"text/css\" href=\"$css\">";
+        if ($scope == Layout::HEAD_SCOPE) {
+            foreach ($this->assets["css"] as $css) {
+                if ($css) {
+                    $tags .= "\n<link rel=\"stylesheet\" type=\"text/css\" href=\"$css\">";
+                }
             }
         }
 

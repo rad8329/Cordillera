@@ -39,13 +39,15 @@ use \cordillera\base\Application;
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-main-navbar-collapse">
                 <span class="sr-only"><?php echo Application::getLang()->translate('Toggle navigation') ?></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="<?php echo Application::getRequest()->home ?>">Cordillera framework</a>
+        </div>		
+		<div class="collapse navbar-collapse" id="bs-main-navbar-collapse">         
         </div>
         <!-- /.navbar-collapse -->
     </div>
@@ -67,5 +69,6 @@ use \cordillera\base\Application;
 <?php endif ?>
 <?php echo $content ?>
 <script src="<?php echo Application::getRequest()->base_url ?>/media/js/cordillera.js" type="text/javascript"></script>
+<?php echo $this->publishRegisteredFiles(self::END_SCOPE) ?>
 </body>
 </html>

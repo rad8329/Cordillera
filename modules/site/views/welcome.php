@@ -11,7 +11,7 @@
  * Made with love in Medellín
  */
 
-/** @var \cordillera\middlewares\View $this */
+/* @var \cordillera\middlewares\View $this */
 ?>
 <div class="container">
     <div class="jumbotron">

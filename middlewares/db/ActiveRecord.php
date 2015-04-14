@@ -40,11 +40,6 @@ abstract class ActiveRecord
      */
     protected $_is_new = true;
 
-    /**
-     * @var Connection
-     */
-    protected $db;
-
     public function __construct()
     {
         $args = func_get_args();
@@ -56,8 +51,6 @@ abstract class ActiveRecord
      */
     protected function init($args)
     {
-        $this->db = Application::getDb();
-
         if (is_array($args) && !empty($args)) {
             if (isset($args[0])) {
                 $this->_is_new = $args[0];
@@ -65,6 +58,14 @@ abstract class ActiveRecord
         }
 
         $this->afterFind();
+    }
+
+    /**
+     * @return Connection
+     */
+    public function getDb()
+    {
+        return Application::getDb();
     }
 
     /**
@@ -180,7 +181,7 @@ abstract class ActiveRecord
             throw new Exception(Application::getLang()->translate('Bad arguments'), 500, Exception::BADARGUMENTS);
         }
 
-        $stmt = $model->db->prepare($query->toSql());
+        $stmt = $model->getDb()->prepare($query->toSql());
         $stmt->execute($query->params);
         $record = $stmt->fetchObject(get_class($model), [false]);
         $stmt->closeCursor();
@@ -222,7 +223,7 @@ abstract class ActiveRecord
             throw new Exception(Application::getLang()->translate('Bad arguments'), 500, Exception::BADARGUMENTS);
         }
 
-        $stmt = $model->db->prepare($query->toSql());
+        $stmt = $model->getDb()->prepare($query->toSql());
         $stmt->execute($query->params);
         $records = [];
 
@@ -272,7 +273,7 @@ abstract class ActiveRecord
             throw new Exception(Application::getLang()->translate('Bad arguments'), 500, Exception::BADARGUMENTS);
         }
 
-        $stmt = $model->db->prepare($query->toSql());
+        $stmt = $model->getDb()->prepare($query->toSql());
         $stmt->execute($query->params);
         $records = $stmt->fetchColumn();
         $stmt->closeCursor();
@@ -347,7 +348,7 @@ abstract class ActiveRecord
 
             $sql .= " WHERE {$pk_condition}";
 
-            $stmt = $this->db->prepare($sql);
+            $stmt = $this->getDb()->prepare($sql);
             $stmt->execute($params);
 
             $this->setDirty(false);
@@ -379,9 +380,9 @@ abstract class ActiveRecord
 
             $sql .= implode(',', $data);
 
-            $stmt = $this->db->prepare($sql);
+            $stmt = $this->getDb()->prepare($sql);
             $stmt->execute($params);
-            $last_insert_id = $this->db->lastInsertId();
+            $last_insert_id = $this->getDb()->lastInsertId();
 
             if (is_array($pk_name)) {
                 /*
@@ -420,7 +421,7 @@ abstract class ActiveRecord
 
         $sql .= " WHERE {$pk_condition}";
 
-        $stmt = $this->db->prepare($sql);
+        $stmt = $this->getDb()->prepare($sql);
         $stmt->execute($params);
 
         $stmt->closeCursor();

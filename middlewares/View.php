@@ -21,13 +21,12 @@ class View implements Display
     /**
      * @var string
      */
-
-    protected $_template = "";
+    protected $_template = '';
 
     /**
      * @var string
      */
-    protected $_output = "";
+    protected $_output = '';
 
     /**
      * @var null|Layout A layout valid name
@@ -42,7 +41,7 @@ class View implements Display
     /**
      * @param string $template A file valid name
      * @param Layout $layout
-     * @param array $data
+     * @param array  $data
      */
     public function __construct($template, Layout $layout = null, array $data = [])
     {
@@ -53,6 +52,7 @@ class View implements Display
 
     /**
      * @throws Exception
+     *
      * @return string
      */
     public function render()
@@ -63,8 +63,8 @@ class View implements Display
 
         ob_start();
 
-        $app_template_file = CORDILLERA_APP_DIR . $this->_template . '.php';
-        $cordillera_template_file = CORDILLERA_DIR . $this->_template . '.php';
+        $app_template_file = CORDILLERA_APP_DIR.$this->_template.'.php';
+        $cordillera_template_file = CORDILLERA_DIR.$this->_template.'.php';
 
         if (is_file($app_template_file)) {
             require_once $app_template_file;
@@ -72,7 +72,7 @@ class View implements Display
             require_once $cordillera_template_file;
         } else {
             throw new Exception(
-                Application::getLang()->translate("The view %s not found", [$this->_template]),
+                Application::getLang()->translate('The view %s not found', [$this->_template]),
                 500,
                 Exception::VIEW
             );

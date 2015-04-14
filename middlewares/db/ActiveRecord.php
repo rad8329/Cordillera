@@ -40,6 +40,11 @@ abstract class ActiveRecord
      */
     protected $_is_new = true;
 
+    /**
+     * @var Connection
+     */
+    protected $db;
+
     public function __construct()
     {
         $args = func_get_args();
@@ -51,22 +56,15 @@ abstract class ActiveRecord
      */
     protected function init($args)
     {
-        if (is_array($args) && !empty($args)) {
+        $this->db = Application::getDb();
 
+        if (is_array($args) && !empty($args)) {
             if (isset($args[0])) {
                 $this->_is_new = $args[0];
             }
         }
 
         $this->afterFind();
-    }
-
-    /**
-     * @return Connection
-     */
-    public function getDb()
-    {
-        return Application::getDb();
     }
 
     /**
@@ -111,13 +109,13 @@ abstract class ActiveRecord
 
     /**
      * @param mixed $pk_value
+     *
      * @return \stdClass
      */
     public static function findByPk($pk_value)
     {
-        /**
-         * @var ActiveRecord $model
-         */
+        /* @var ActiveRecord $model */
+
         $model = new static();
         $pk_name = $model->getPkName();
         unset($model);
@@ -127,7 +125,7 @@ abstract class ActiveRecord
             foreach ($pk_name as $pk) {
                 $pk_condition[] = "T.{$pk} = :{$pk}";
             }
-            $pk_condition = implode(" AND ", $pk_condition);
+            $pk_condition = implode(' AND ', $pk_condition);
         } else {
             $pk_condition = "T.{$pk_name} = :{$pk_name}";
         }
@@ -146,42 +144,43 @@ abstract class ActiveRecord
 
     /**
      * @param Query|array|bool $args
+     *
      * @return array
+     *
      * @throws Exception
      */
     public static function find($args = false)
     {
-        /**
-         * @var ActiveRecord $model
-         */
+        /* @var ActiveRecord $model */
+
         $query = null;
-        $model = new static();
+        $reflect = new \ReflectionClass(get_called_class());
+        $model = $reflect->newInstanceArgs();
 
         if ($args && $args instanceof Query) {
             $query = $args;
             $query->limit = 1;
 
             if (empty($query->from)) {
-                $query->addFrom($model->getTableName() . " T");
+                $query->addFrom($model->getTableName().' T');
             }
         } elseif ($args && is_array($args)) {
-
             $args['limit'] = 1;
             if (!isset($args['from'])) {
-                $args['from'] = $model->getTableName() . " T";
+                $args['from'] = $model->getTableName().' T';
             }
             $query = new Query($args);
         } elseif (!$args) {
             $query = new Query(
                 [
-                    'from' => $model->getTableName() . " T",
-                    'limit' => 1
+                    'from' => $model->getTableName().' T',
+                    'limit' => 1,
                 ]);
         } else {
-            throw new Exception(Application::getLang()->translate("Bad arguments"), 500, Exception::BADARGUMENTS);
+            throw new Exception(Application::getLang()->translate('Bad arguments'), 500, Exception::BADARGUMENTS);
         }
 
-        $stmt = $model->getDb()->prepare($query->toSql());
+        $stmt = $model->db->prepare($query->toSql());
         $stmt->execute($query->params);
         $record = $stmt->fetchObject(get_class($model), [false]);
         $stmt->closeCursor();
@@ -191,43 +190,43 @@ abstract class ActiveRecord
 
     /**
      * @param Query|array|bool $args
+     *
      * @return array
+     *
      * @throws Exception
      */
     public static function findAll($args = false)
     {
-        /**
-         * @var ActiveRecord $model
-         */
+        /* @var ActiveRecord $model */
+
         $query = null;
-        $model = new static();
+        $reflect = new \ReflectionClass(get_called_class());
+        $model = $reflect->newInstanceArgs();
 
         if ($args && $args instanceof Query) {
             $query = $args;
             if (empty($query->from)) {
-                $query->addFrom($model->getTableName() . " T");
+                $query->addFrom($model->getTableName().' T');
             }
         } elseif ($args && is_array($args)) {
             if (!isset($args['from'])) {
-                $args['from'] = $model->getTableName() . " T";
+                $args['from'] = $model->getTableName().' T';
             }
             $query = new Query($args);
         } elseif (!$args) {
             $query = new Query(
                 [
-                    'from' => $model->getTableName() . " T"
+                    'from' => $model->getTableName().' T',
                 ]);
         } else {
-
-            throw new Exception(Application::getLang()->translate("Bad arguments"), 500, Exception::BADARGUMENTS);
+            throw new Exception(Application::getLang()->translate('Bad arguments'), 500, Exception::BADARGUMENTS);
         }
 
-        $stmt = $model->getDb()->prepare($query->toSql());
+        $stmt = $model->db->prepare($query->toSql());
         $stmt->execute($query->params);
         $records = [];
 
         while ($record = $stmt->fetchObject(get_class($model), [false])) {
-
             $records[] = $record;
         }
 
@@ -238,41 +237,42 @@ abstract class ActiveRecord
 
     /**
      * @param Query|array|bool $args
+     *
      * @return int
+     *
      * @throws Exception
      */
     public static function count($args = false)
     {
-        /**
-         * @var ActiveRecord $model
-         */
+        /* @var ActiveRecord $model */
+
         $query = null;
-        $model = new static();
+        $reflect = new \ReflectionClass(get_called_class());
+        $model = $reflect->newInstanceArgs();
 
         if ($args && $args instanceof Query) {
             $query = $args;
             if (empty($query->from)) {
-                $query->addFrom($model->getTableName() . " T");
+                $query->addFrom($model->getTableName().' T');
             }
-            $query->select = "COUNT(*)";
+            $query->select = 'COUNT(*)';
         } elseif ($args && is_array($args)) {
             if (!isset($args['from'])) {
-                $args['from'] = $model->getTableName() . " T";
+                $args['from'] = $model->getTableName().' T';
             }
             $query = new Query($args);
-            $query->select = "COUNT(*)";
+            $query->select = 'COUNT(*)';
         } elseif (!$args) {
             $query = new Query(
                 [
-                    'from' => $model->getTableName() . " T",
-                    'select' => "COUNT(*)"
+                    'from' => $model->getTableName().' T',
+                    'select' => 'COUNT(*)',
                 ]);
         } else {
-
-            throw new Exception(Application::getLang()->translate("Bad arguments"), 500, Exception::BADARGUMENTS);
+            throw new Exception(Application::getLang()->translate('Bad arguments'), 500, Exception::BADARGUMENTS);
         }
 
-        $stmt = $model->getDb()->prepare($query->toSql());
+        $stmt = $model->db->prepare($query->toSql());
         $stmt->execute($query->params);
         $records = $stmt->fetchColumn();
         $stmt->closeCursor();
@@ -299,8 +299,7 @@ abstract class ActiveRecord
     protected function update()
     {
         if ($this->isDirty()) {
-
-            $sql = "UPDATE " . $this->getTableName() . " SET ";
+            $sql = 'UPDATE '.$this->getTableName().' SET ';
             $data = [];
             $params = [];
             $pk_name = $this->getPkName();
@@ -309,7 +308,6 @@ abstract class ActiveRecord
                 $is_pk = false;
 
                 if (is_array($pk_name)) {
-
                     foreach ($pk_name as $pk) {
                         $is_pk = $property->getName() == $pk;
                         if ($is_pk) {
@@ -325,7 +323,7 @@ abstract class ActiveRecord
                 }
 
                 if ($this->{$property->getName()} instanceof Expression) {
-                    $data[] = "`{$property->getName()}` = " . $this->{$property->getName()}->toSql();
+                    $data[] = "`{$property->getName()}` = ".$this->{$property->getName()}->toSql();
                 } else {
                     $data[] = "`{$property->getName()}` = :{$property->getName()}";
                     $params[":{$property->getName()}"] = $this->{$property->getName()};
@@ -337,12 +335,11 @@ abstract class ActiveRecord
             $stmt = null;
 
             if (is_array($pk_name)) {
-
                 foreach ($pk_name as $pk) {
                     $pk_condition[] = "{$pk} = :_{$pk}";
                     $params[":_{$pk}"] = $this->{$pk};
                 }
-                $pk_condition = implode(" AND ", $pk_condition);
+                $pk_condition = implode(' AND ', $pk_condition);
             } else {
                 $pk_condition = "`{$pk_name}` = :_{$pk_name}";
                 $params[":_{$pk_name}"] = $this->{$pk_name};
@@ -350,10 +347,8 @@ abstract class ActiveRecord
 
             $sql .= " WHERE {$pk_condition}";
 
-            $this->getDb()->beginTransaction();
-            $stmt = $this->getDb()->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
-            $this->getDb()->commit();
 
             $this->setDirty(false);
             $stmt->closeCursor();
@@ -365,7 +360,7 @@ abstract class ActiveRecord
     protected function insert()
     {
         if ($this->isDirty()) {
-            $sql = "INSERT INTO " . $this->getTableName() . "  SET ";
+            $sql = 'INSERT INTO '.$this->getTableName().'  SET ';
             $data = [];
             $params = [];
 
@@ -374,7 +369,7 @@ abstract class ActiveRecord
             foreach ((new \ReflectionObject($this))->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
                 if ($this->{$property->getName()}) {
                     if ($this->{$property->getName()} instanceof Expression) {
-                        $data[] = "`{$property->getName()}` = " . $this->{$property->getName()}->toSql();
+                        $data[] = "`{$property->getName()}` = ".$this->{$property->getName()}->toSql();
                     } else {
                         $data[] = "`{$property->getName()}` = :{$property->getName()}";
                         $params[":{$property->getName()}"] = $this->{$property->getName()};
@@ -384,14 +379,12 @@ abstract class ActiveRecord
 
             $sql .= implode(',', $data);
 
-            $this->getDb()->beginTransaction();
-            $stmt = $this->getDb()->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
-            $last_insert_id = $this->getDb()->lastInsertId();
-            $this->getDb()->commit();
+            $last_insert_id = $this->db->lastInsertId();
 
             if (is_array($pk_name)) {
-                /**
+                /*
                  * @TODO: Composite PK
                  */
             } else {
@@ -408,7 +401,7 @@ abstract class ActiveRecord
 
     public function delete()
     {
-        $sql = "DELETE FROM " . $this->getTableName() . " ";
+        $sql = 'DELETE FROM '.$this->getTableName().' ';
 
         $pk_name = $this->getPkName();
         $params = [];
@@ -419,7 +412,7 @@ abstract class ActiveRecord
                 $pk_condition[] = "{$pk} = :_{$pk}";
                 $params[":_{$pk}"] = $this->{$pk};
             }
-            $pk_condition = implode(" AND ", $pk_condition);
+            $pk_condition = implode(' AND ', $pk_condition);
         } else {
             $pk_condition = "`{$pk_name}` = :_{$pk_name}";
             $params[":_{$pk_name}"] = $this->{$pk_name};
@@ -427,10 +420,8 @@ abstract class ActiveRecord
 
         $sql .= " WHERE {$pk_condition}";
 
-        $this->getDb()->beginTransaction();
-        $stmt = $this->getDb()->prepare($sql);
+        $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
-        $this->getDb()->commit();
 
         $stmt->closeCursor();
 
@@ -439,6 +430,7 @@ abstract class ActiveRecord
 
     /**
      * @param bool $validate
+     *
      * @return bool
      */
     public function save($validate = true)
@@ -466,6 +458,5 @@ abstract class ActiveRecord
 
     public function afterFind()
     {
-
     }
 }

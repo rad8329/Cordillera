@@ -40,6 +40,7 @@ trait Model
 
     /**
      * @param string $property
+     *
      * @return bool
      */
     public function hasError($property)
@@ -58,6 +59,7 @@ trait Model
 
     /**
      * @param string $attribute
+     *
      * @return array
      */
     public function getErrors($attribute)
@@ -75,6 +77,7 @@ trait Model
 
     /**
      * @param string $name
+     *
      * @return string
      */
     public function fieldName($name)

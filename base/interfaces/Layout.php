@@ -18,9 +18,10 @@ interface Layout
     /**
      * @param $property
      * @param $default
+     *
      * @return mixed
      */
-    public function getProperty($property, $default = "");
+    public function getProperty($property, $default = '');
 
     /**
      * @param string $file A valid js file name

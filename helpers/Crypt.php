@@ -19,29 +19,32 @@ class Crypt
 {
     /**
      * @param string $text
+     *
      * @return string
      */
     public static function hash($text)
     {
-        return md5($text . Application::getRequest()->salt);
+        return md5($text.Application::getRequest()->salt);
     }
 
     /**
      * @param int $lenght
+     *
      * @return string
      */
-    static function create_iv($lenght)
+    public static function create_iv($lenght)
     {
         return bin2hex(mcrypt_create_iv($lenght, MCRYPT_RAND));
     }
 
     /**
      * @param string $name
+     *
      * @return string
      */
     public static function requestVar($name)
     {
-        if (Application::getConfig()->get("request.csrf")) {
+        if (Application::getConfig()->get('request.csrf')) {
             $name = self::hash($name);
         }
 

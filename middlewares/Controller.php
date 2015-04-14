@@ -61,23 +61,22 @@ class Controller implements ControllerIterface
 
     protected function init()
     {
-        $filename_app = CORDILLERA_APP_DIR . 'modules' . DS . $this->_handler . '.action.php';
-        $filename_cordillera = CORDILLERA_DIR . 'modules' . DS . $this->_handler . '.action.php';
+        $filename_app = CORDILLERA_APP_DIR.'modules'.DS.$this->_handler.'.action.php';
+        $filename_cordillera = CORDILLERA_DIR.'modules'.DS.$this->_handler.'.action.php';
 
         $this->_filename = is_file($filename_app) ?
             $filename_app : (is_file($filename_cordillera) ? $filename_cordillera : '');
 
-        Cordillera::$instance->share("controller", function () {
+        Cordillera::$instance->share('controller', function () {
             return $this;
         });
 
         if (!empty($this->_filename) && is_file($this->_filename)) {
-
             require_once $this->_filename;
             $this->run();
         } else {
             throw new Exception(
-                Application::getLang()->translate("The command %s not found", [$this->_handler]),
+                Application::getLang()->translate('The command %s not found', [$this->_handler]),
                 404,
                 Exception::NOTFOUND
             );
@@ -90,7 +89,7 @@ class Controller implements ControllerIterface
 
         if (!in_array($this->type, ['json', 'html'])) {
             throw new Exception(
-                Application::getLang()->translate("The response type must be json or html"),
+                Application::getLang()->translate('The response type must be json or html'),
                 500, Exception::VIEW
             );
         }
@@ -101,12 +100,13 @@ class Controller implements ControllerIterface
         if (isset($this->_actions[$this->_method]) && is_callable($this->_actions[$this->_method])) {
             $this->_actions[$this->_method]($this);
         } else {
-            throw new Exception(Application::getLang()->translate("HTTP verb is forbidden"), 403, Exception::FORBIDDEN);
+            throw new Exception(Application::getLang()->translate('HTTP verb is forbidden'), 403, Exception::FORBIDDEN);
         }
     }
 
     /**
      * @param View|array|string $response
+     *
      * @throws Exception
      */
     public function setResponse($response)
@@ -132,17 +132,16 @@ class Controller implements ControllerIterface
         }
     }
 
-
     /**
      * @throws Exception
      */
     public function assertJsonContentType()
     {
         if (
-            !isset($_SERVER["CONTENT_TYPE"]) ||
-            (isset($_SERVER["CONTENT_TYPE"]) && !preg_match('/^application\/json/', $_SERVER["CONTENT_TYPE"]))
+            !isset($_SERVER['CONTENT_TYPE']) ||
+            (isset($_SERVER['CONTENT_TYPE']) && !preg_match('/^application\/json/', $_SERVER['CONTENT_TYPE']))
         ) {
-            throw new Exception(Application::getLang()->translate("Bad request"), 400, Exception::BADREQUEST);
+            throw new Exception(Application::getLang()->translate('Bad request'), 400, Exception::BADREQUEST);
         }
     }
 
@@ -151,7 +150,7 @@ class Controller implements ControllerIterface
      */
     public function assertCsrfToken()
     {
-        if (Application::getConfig()->get("request.csrf") && Request::isPost() && !$this->rest) {
+        if (Application::getConfig()->get('request.csrf') && Request::isPost() && !$this->rest) {
             // If the CSRF token is enabled, and is post method request
             $request = Application::getRequest();
             $payload = Request::payload(Application::getRequest()->csrf_id);
@@ -163,7 +162,7 @@ class Controller implements ControllerIterface
                 // Payload data
                 (!empty($payload) && $payload != $request->csrf_value)
             ) {
-                throw new Exception(Application::getLang()->translate("Bad request"), 400, Exception::BADREQUEST);
+                throw new Exception(Application::getLang()->translate('Bad request'), 400, Exception::BADREQUEST);
             }
         }
     }
@@ -174,7 +173,7 @@ class Controller implements ControllerIterface
     public function assertAjax()
     {
         if (!Request::isAjax()) {
-            throw new Exception(Application::getLang()->translate("Bad request"), 400, Exception::BADREQUEST);
+            throw new Exception(Application::getLang()->translate('Bad request'), 400, Exception::BADREQUEST);
         }
     }
 

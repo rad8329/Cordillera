@@ -19,15 +19,15 @@ class Response
 {
     public static function setSecurityHeaders()
     {
-        header("x-content-type-options: nosniff");
-        header("x-frame-options: sameorigin");
-        header("x-permitted-cross-domain-policies: master-only");
-        header("x-xss-protection: 1; mode=block");
-        header("X-Powered-By: PHP");
+        header('x-content-type-options: nosniff');
+        header('x-frame-options: sameorigin');
+        header('x-permitted-cross-domain-policies: master-only');
+        header('x-xss-protection: 1; mode=block');
+        header('X-Powered-By: PHP');
     }
 
     /**
-     * @param int $statusCode HTTP status code
+     * @param int  $statusCode HTTP status code
      * @param bool $exit
      */
     public static function headerStatus($statusCode, $exit = false)
@@ -85,13 +85,13 @@ class Response
                 506 => 'Variant Also Negotiates',
                 507 => 'Insufficient Storage',
                 509 => 'Bandwidth Limit Exceeded',
-                510 => 'Not Extended'
+                510 => 'Not Extended',
             ];
         }
 
         if (isset($status_codes[$statusCode])) {
-            $status_string = $statusCode . ' ' . $status_codes[$statusCode];
-            header($_SERVER['SERVER_PROTOCOL'] . ' ' . $status_string, true, $statusCode);
+            $status_string = $statusCode.' '.$status_codes[$statusCode];
+            header($_SERVER['SERVER_PROTOCOL'].' '.$status_string, true, $statusCode);
             if ($exit) {
                 exit;
             }
@@ -126,20 +126,19 @@ class Response
      */
     public static function exception(Exception $exception)
     {
-        if (Request::isAjax() || (Application::getController()->type == "json" || Application::getController()->rest)) {
-            $response = ["error" => true, "message" => $exception->getMessage()];
+        if (Request::isAjax() || (Application::getController()->type == 'json' || Application::getController()->rest)) {
+            $response = ['error' => true, 'message' => $exception->getMessage()];
 
             if (CORDILLERA_DEBUG) {
-                $response["trace"] = $exception->getAllTraces();
+                $response['trace'] = $exception->getAllTraces();
             }
 
             self::json($response);
-
         } else {
-            $layout = new Layout("error");
+            $layout = new Layout('error');
 
             if (CORDILLERA_DEBUG) {
-                $layout->properties["title"] = Exception::$types[$exception->getCode()];
+                $layout->properties['title'] = Exception::$types[$exception->getCode()];
             }
             if (ob_get_length()) {
                 ob_end_clean();

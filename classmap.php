@@ -18,5 +18,5 @@ return [
     'auth' => "cordillera\\middlewares\\Auth",
     'db' => "cordillera\\middlewares\\db\\Connection",
     'lang' => "cordillera\\middlewares\\Lang",
-    'controller' => "cordillera\\middlewares\\Controller"
+    'controller' => "cordillera\\middlewares\\Controller",
 ];

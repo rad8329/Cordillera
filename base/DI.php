@@ -21,7 +21,7 @@ class DI
     protected $_container = [];
 
     /**
-     * @param string $container
+     * @param string   $container
      * @param \Closure $definition
      */
     public function share($container, \Closure $definition)
@@ -29,9 +29,9 @@ class DI
         $this->__set($container, function () use ($container, $definition) {
 
             if (!isset(Cordillera::$definitions[$container])) {
-
                 Cordillera::$definitions[$container] = $definition();
             }
+
             return Cordillera::$definitions[$container];
         });
     }
@@ -50,16 +50,17 @@ class DI
      * @param $container
      * @param callable $definition
      */
-    function __set($container, \Closure $definition)
+    public function __set($container, \Closure $definition)
     {
         $this->_container[$container] = $definition;
     }
 
     /**
      * @param $container
+     *
      * @return mixed|null
      */
-    function __get($container)
+    public function __get($container)
     {
         return isset($this->_container[$container]) ? $this->_container[$container]($this) : null;
     }

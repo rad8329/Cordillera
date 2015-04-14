@@ -29,11 +29,12 @@ class Config
     }
 
     /**
-     * Example: Application::getConfig()->get("response.default");
+     * Example: Application::getConfig()->get("response.default");.
      *
-     * @param string $config A string separate by point
-     * @param null $default
-     * @return null
+     * @param string $config  A string separate by point
+     * @param null   $default
+     *
+     * @return mixed
      */
     public function get($config, $default = null)
     {

@@ -21,7 +21,7 @@ class Cordillera
      * @var string
      */
     public static $exception;
-    
+
     /**
      * @var DI
      */
@@ -34,6 +34,7 @@ class Cordillera
 
     /**
      * @param $conatiner
+     *
      * @return mixed|null
      */
     public static function get($conatiner)
@@ -43,18 +44,21 @@ class Cordillera
 
     /**
      * @param string $classname
-     * @param array $config
+     * @param array  $config
      * @param string $alternative_classname
+     *
      * @return mixed
      */
-    public static function factory($classname, array $config = [], $alternative_classname = "")
+    public static function factory($classname, array $config = [], $alternative_classname = '')
     {
+        $object = null;
         if (class_exists($classname)) {
             $reflect = new \ReflectionClass($classname);
-            return $reflect->newInstanceArgs($config);
+
+            $object = $reflect->newInstanceArgs($config);
         } else {
             Cordillera::$exception = new Exception(
-                Application::getLang()->translate("%s not found", [$classname]),
+                Application::getLang()->translate('%s not found', [$classname]),
                 500,
                 Exception::ERROR
             );
@@ -62,9 +66,10 @@ class Cordillera
 
         if (!class_exists($classname) && class_exists($alternative_classname)) {
             $reflect = new \ReflectionClass($alternative_classname);
-            return $reflect->newInstanceArgs($config);
+
+            $object = $reflect->newInstanceArgs($config);
         }
 
-        return null;
+        return $object;
     }
 }

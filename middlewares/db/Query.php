@@ -23,7 +23,7 @@ class Query
     /**
      * @var string
      */
-    protected $_sql = "";
+    protected $_sql = '';
 
     /**
      * @var array
@@ -41,7 +41,7 @@ class Query
     /**
      * @var string
      */
-    public $select = "*";
+    public $select = '*';
 
     /**
      * @var array
@@ -51,12 +51,12 @@ class Query
     /**
      * @var string
      */
-    public $limit = "";
+    public $limit = '';
 
     /**
      * @var string
      */
-    public $offset = "";
+    public $offset = '';
 
     /**
      * @var array
@@ -73,7 +73,7 @@ class Query
      *      'condition' => 'T.zone_id = :zone_id',
      *      'select' => 'T.id,T.`code`,T.`name`,T.zone_id',
      *      'params' => [':zone_id' => $zone->id]
-     *    ]);
+     *    ]);.
      *
      * @param array $config
      */
@@ -134,10 +134,10 @@ class Query
             $this->select = $this->_config['select'];
         }
         if (isset($this->_config['limit'])) {
-            $this->limit = (int)$this->_config['limit'];
+            $this->limit = (int) $this->_config['limit'];
         }
         if (isset($this->_config['offset'])) {
-            $this->offset = (int)$this->_config['offset'];
+            $this->offset = (int) $this->_config['offset'];
         }
         if (isset($this->_config['params']) && is_array($this->_config['params'])) {
             $this->params = $this->_config['params'];
@@ -151,7 +151,7 @@ class Query
     public function addCondition($condition, $operator = 'AND')
     {
         if (empty($this->condition)) {
-            $operator = "";
+            $operator = '';
         }
         $this->condition[] = " {$operator} {$condition}";
     }
@@ -193,24 +193,24 @@ class Query
      */
     public function toSql()
     {
-        $this->_sql = "SELECT {$this->select} FROM " . implode(",", $this->from);
+        $this->_sql = "SELECT {$this->select} FROM ".implode(',', $this->from);
         if (!empty($this->join)) {
-            $this->_sql .= " " . implode(" ", $this->join);
+            $this->_sql .= ' '.implode(' ', $this->join);
         }
         if (!empty($this->condition)) {
-            $this->_sql .= " WHERE " . implode(" ", $this->condition);
+            $this->_sql .= ' WHERE '.implode(' ', $this->condition);
         }
         if (!empty($this->group)) {
-            $this->_sql .= " GROUP BY " . implode(",", $this->group);
+            $this->_sql .= ' GROUP BY '.implode(',', $this->group);
         }
         if (!empty($this->order)) {
-            $this->_sql .= " ORDER BY " . implode(",", $this->order);
+            $this->_sql .= ' ORDER BY '.implode(',', $this->order);
         }
         if (!empty($this->limit)) {
-            $this->_sql .= " LIMIT " . $this->limit;
+            $this->_sql .= ' LIMIT '.$this->limit;
         }
         if (!empty($this->offset)) {
-            $this->_sql .= " OFFSET " . $this->offset;
+            $this->_sql .= ' OFFSET '.$this->offset;
         }
 
         return $this->_sql;

@@ -11,6 +11,6 @@
  * Made with love in Medellín
  */
 
-/**
+/*
  * @TODO: Logic for debug dashboard
  */

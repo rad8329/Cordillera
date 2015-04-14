@@ -21,7 +21,7 @@ class Session extends \SessionHandler
     protected $_key;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $_lifetime;
 
@@ -40,12 +40,11 @@ class Session extends \SessionHandler
      */
     protected $_name;
 
-
     /**
      * @param string $key
      * @param string $path
-     * @param integer $lifetime
-     * @param array $cookie
+     * @param int    $lifetime
+     * @param array  $cookie
      */
     public function __construct($key, $path, $lifetime, array $cookie = [])
     {
@@ -59,8 +58,8 @@ class Session extends \SessionHandler
     protected function init()
     {
         $this->_name = md5(
-            $this->_key .
-            $_SERVER['HTTP_USER_AGENT'] .
+            $this->_key.
+            $_SERVER['HTTP_USER_AGENT'].
             (ip2long($_SERVER['REMOTE_ADDR']) & ip2long('255.255.0.0'))
         );
 
@@ -69,7 +68,7 @@ class Session extends \SessionHandler
             'path' => isset($this->_cookie['path']) ? $this->_cookie['path'] : '/',
             'domain' => isset($this->_cookie['domain']) ? $this->_cookie['domain'] : '',
             'secure' => isset($this->_cookie['secure']) ? $this->_cookie['secure'] : isset($_SERVER['HTTPS']),
-            'httponly' => isset($this->_cookie['httponly']) ? $this->_cookie['httponly'] : true
+            'httponly' => isset($this->_cookie['httponly']) ? $this->_cookie['httponly'] : true,
         ];
 
         $this->setup();
@@ -112,7 +111,6 @@ class Session extends \SessionHandler
     {
         if (session_id() === '') {
             if (session_start()) {
-
                 return mt_rand(0, 4) === 0 ? $this->refresh() : true; // 1/5
             }
         }
@@ -122,7 +120,7 @@ class Session extends \SessionHandler
 
     public function destroy($id)
     {
-        $file = $this->_path . 'sess_' . $id;
+        $file = $this->_path.'sess_'.$id;
         parent::destroy($id);
         if (file_exists($file)) {
             unlink($file);
@@ -159,6 +157,7 @@ class Session extends \SessionHandler
 
     /**
      * @param string $id
+     *
      * @return string
      */
     public function read($id)
@@ -169,6 +168,7 @@ class Session extends \SessionHandler
     /**
      * @param string $id
      * @param string $data
+     *
      * @return bool
      */
     public function write($id, $data)
@@ -181,6 +181,7 @@ class Session extends \SessionHandler
 
     /**
      * @param int $ttl
+     *
      * @return bool
      */
     public function isExpired($ttl = 30)
@@ -201,7 +202,7 @@ class Session extends \SessionHandler
      */
     public function isFingerprint()
     {
-        $hash = md5($_SERVER['HTTP_USER_AGENT'] . (ip2long($_SERVER['REMOTE_ADDR']) & ip2long('255.255.0.0')));
+        $hash = md5($_SERVER['HTTP_USER_AGENT'].(ip2long($_SERVER['REMOTE_ADDR']) & ip2long('255.255.0.0')));
 
         if (isset($_SESSION['_fingerprint'])) {
             return $_SESSION['_fingerprint'] === $hash;
@@ -214,6 +215,7 @@ class Session extends \SessionHandler
 
     /**
      * @param int $ttl minutes
+     *
      * @return bool
      */
     protected function isValid($ttl = 30)
@@ -223,7 +225,8 @@ class Session extends \SessionHandler
 
     /**
      * @param string $name
-     * @param null $default
+     * @param null   $default
+     *
      * @return mixed
      */
     public function get($name, $default = null)
@@ -247,7 +250,7 @@ class Session extends \SessionHandler
 
     /**
      * @param string $name
-     * @param mixed $value
+     * @param mixed  $value
      */
     public function put($name, $value)
     {
@@ -262,7 +265,7 @@ class Session extends \SessionHandler
                 $session[$next] = [];
             }
 
-            $session =& $session[$next];
+            $session = & $session[$next];
         }
 
         $session[array_shift($parsed)] = $value;
@@ -273,13 +276,13 @@ class Session extends \SessionHandler
      */
     public function clean($name)
     {
-        $parsed = implode("", array_map(function ($name) {
+        $parsed = implode('', array_map(function ($name) {
                 return ("['$name']");
-            }, explode(".", $name))
+            }, explode('.', $name))
         );
 
         if ($parsed) {
-            eval('if(isset($_SESSION' . $parsed . ')) unset($_SESSION' . $parsed . ');');
+            eval('if(isset($_SESSION'.$parsed.')) unset($_SESSION'.$parsed.');');
         }
     }
 }

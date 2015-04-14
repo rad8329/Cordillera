@@ -37,15 +37,16 @@ class Connection extends PDO
      * @var array
      */
     protected $_options = [
-        PDO::ATTR_EMULATE_PREPARES => false,
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        PDO::ATTR_EMULATE_PREPARES => true,
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     ];
 
     /**
      * @param string $dsn
      * @param string $username
      * @param string $password
-     * @param array $options
+     * @param array  $options
+     *
      * @throws Exception
      */
     public function __construct($dsn, $username, $password, array $options = [])
@@ -69,8 +70,10 @@ class Connection extends PDO
 
     /**
      * @param string $statement
-     * @param array $driver_options
+     * @param array  $driver_options
+     *
      * @return \PDOStatement
+     *
      * @throws Exception
      */
     public function prepare($statement, $driver_options = [])
@@ -84,7 +87,9 @@ class Connection extends PDO
 
     /**
      * @param array $input_parameters
+     *
      * @return mixed
+     *
      * @throws Exception
      */
     public function execute(array $input_parameters = null)

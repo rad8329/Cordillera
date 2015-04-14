@@ -58,7 +58,7 @@ class Router implements RouterInterface
         'h' => '[0-9A-Fa-f]++',
         '*' => '.+?',
         '**' => '.++',
-        '' => '[^/\.]++'
+        '' => '[^/\.]++',
     ];
 
     /**
@@ -67,13 +67,13 @@ class Router implements RouterInterface
     protected $_handlers = [];
 
     /**
-     * @param array $rules
+     * @param array  $rules
      * @param string $base_path
      * @param string $script_name
      * @param string $controller_classname
      * @param string $default_route
-     * @param bool $show_index_file
-     * @param array $match_types
+     * @param bool   $show_index_file
+     * @param array  $match_types
      */
     public function __construct(
         $base_path,
@@ -83,8 +83,7 @@ class Router implements RouterInterface
         array $rules = [],
         $show_index_file = true,
         array $match_types = []
-    )
-    {
+    ) {
         $this->_script_name = $script_name;
         $this->_base_path = $base_path;
         $this->_match_types = array_merge($this->_match_types, $match_types);
@@ -96,20 +95,21 @@ class Router implements RouterInterface
 
     protected function init(array $rules)
     {
-        /**
+        /*
          * @TODO: Allow to add multiples routes to the same controller action
          */
         $this->add($rules);
     }
 
     /**
-     * Add multiple routes at once from array in the following format:
+     * Add multiple routes at once from array in the following format:.
      *
      *   $routes = [
      *      a[$route, $handler]
      *   ];
      *
      * @param array $routes
+     *
      * @throws Exception
      */
     public function add(array $routes)
@@ -120,11 +120,12 @@ class Router implements RouterInterface
     }
 
     /**
-     * Map a route to a target
+     * Map a route to a target.
      *
-     * @param string $route The route regex, custom regex must start with an @.
-     * You can use multiple pre-set regex filters, like [i:id]
-     * @param mixed $handler The handler target where this route should point to.
+     * @param string $route   The route regex, custom regex must start with an @.
+     *                        You can use multiple pre-set regex filters, like [i:id]
+     * @param mixed  $handler The handler target where this route should point to.
+     *
      * @throws Exception
      */
     public function map($route, $handler)
@@ -133,7 +134,7 @@ class Router implements RouterInterface
 
         if ($handler) {
             if (isset($this->_handlers[$handler])) {
-                throw new Exception(Application::getLang()->translate("Can not redeclare route %s", [$handler]), 500, Exception::ROUTING);
+                throw new Exception(Application::getLang()->translate('Can not redeclare route %s', [$handler]), 500, Exception::ROUTING);
             } else {
                 $this->_handlers[$handler] = $route;
             }
@@ -141,27 +142,28 @@ class Router implements RouterInterface
     }
 
     /**
-     * Reversed routing
+     * Reversed routing.
      *
      * Generate the URL for a named route. Replace regexes with supplied parameters
      *
      * @param string $route The name of the route.
      * @param array @params Associative array of parameters to replace placeholders with.
+     *
      * @return string The URL of the route with named parameters in place.
      */
     public function generate($route, array $params = [])
     {
         if (!isset($this->_handlers[$route])) {
-            $url = $this->_show_index_file ? '/'.$this->_script_name.'/' . $route : "/" . $route;
-            return $url . (!empty($params) ? "?" . http_build_query($params, "&") : "");
+            $url = $this->_show_index_file ? '/'.$this->_script_name.'/'.$route : '/'.$route;
+
+            return $url.(!empty($params) ? '?'.http_build_query($params, '&') : '');
         }
 
         $route = $this->_handlers[$route];
         //prepare url
-        $url = $this->_show_index_file ? '/'.$this->_script_name . $route : $route;
+        $url = $this->_show_index_file ? '/'.$this->_script_name.$route : $route;
 
         if (preg_match_all('`(/|\.|)\[([^:\]]*+)(?::([^:\]]*+))?\](\?|)`', $route, $matches, PREG_SET_ORDER)) {
-
             foreach ($matches as $match) {
                 list($block, $pre, $type, $param, $optional) = $match;
                 unset($type);
@@ -170,25 +172,26 @@ class Router implements RouterInterface
                     $block = substr($block, 1);
                 }
                 if (isset($params[$param])) {
-
                     $url = str_replace($block, $params[$param], $url);
                     unset($params[$param]);
                 } elseif ($optional) {
-                    $url = str_replace($pre . $block, '', $url);
+                    $url = str_replace($pre.$block, '', $url);
                 } else {
-                    $url = str_replace($pre . $block, '', $url);
+                    $url = str_replace($pre.$block, '', $url);
                 }
             }
-            $url = $url . (!empty($params) ? "?" . http_build_query($params, "&") : "");
+            $url = $url.(!empty($params) ? '?'.http_build_query($params, '&') : '');
         }
 
         return $url;
     }
 
     /**
-     * Match a given Request Url against stored routes
+     * Match a given Request Url against stored routes.
+     *
      * @param string $request_url
-     * @return array|boolean Array with route information on success, false on failure (no match).
+     *
+     * @return array|bool Array with route information on success, false on failure (no match).
      */
     public function match($request_url = null)
     {
@@ -197,11 +200,10 @@ class Router implements RouterInterface
         // set Request Url if it isn't passed as parameter
         if ($request_url === null) {
             $request_url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
-
         }
         // strip base path from request url
         if (($strpos = strpos($request_url, $this->_script_name)) !== false) {
-            $request_url = substr($request_url, strlen($this->_base_path . '/'.$this->_script_name));
+            $request_url = substr($request_url, strlen($this->_base_path.'/'.$this->_script_name));
         } else {
             $request_url = substr($request_url, strlen($this->_base_path));
         }
@@ -215,22 +217,23 @@ class Router implements RouterInterface
         // http://www.mail-archive.com/internals@lists.php.net/msg33119.html
         $request = $_GET;
 
-        if (isset($request['h'])) {// If the URI is full named
+        if (isset($request['h'])) {
+            // If the URI is full named
             unset($request['h']);
+
             return [
                 'friendly' => false,
                 'handler' => $_GET['h'],
-                'params' => $request
+                'params' => $request,
             ];
         } else {
-
             foreach ($this->_routes as $handler) {
                 list($_route, $target) = $handler;
                 // Check for a wildcard (matches all)
                 if ($_route === '*') {
                     $match = true;
                 } elseif (isset($_route[0]) && $_route[0] === '@') {
-                    $pattern = '`' . substr($_route, 1) . '`u';
+                    $pattern = '`'.substr($_route, 1).'`u';
                     $match = preg_match($pattern, $request_url, $params);
                 } else {
                     $route = null;
@@ -263,16 +266,18 @@ class Router implements RouterInterface
                 }
 
                 if (($match == true || $match > 0)) {
-
                     if ($params) {
                         foreach ($params as $key => $value) {
-                            if (is_numeric($key)) unset($params[$key]);
+                            if (is_numeric($key)) {
+                                unset($params[$key]);
+                            }
                         }
                     }
+
                     return [
                         'friendly' => true,
                         'handler' => $target,
-                        'params' => $params
+                        'params' => $params,
                     ];
                 }
             }
@@ -283,6 +288,7 @@ class Router implements RouterInterface
 
     /**
      * @return Controller
+     *
      * @throws Exception
      */
     public function dispatch()
@@ -290,18 +296,17 @@ class Router implements RouterInterface
         $match = $this->match();
 
         if (class_exists($this->_controller_classname)) {
-
             $controller = $this->_controller_classname;
         } else {
             Cordillera::$exception = new Exception(
-                Application::getLang()->translate("%s not found", [$this->_controller_classname]),
+                Application::getLang()->translate('%s not found', [$this->_controller_classname]),
                 500,
                 Exception::ERROR
             );
             $controller = "cordillera\\middlewares\\Controller";
         }
 
-        $handler = "";
+        $handler = '';
 
         if (isset($match['friendly']) && !$match['friendly']) {
             $handler = $match['handler'] ? $match['handler'] : $this->_default_route;
@@ -312,19 +317,19 @@ class Router implements RouterInterface
             $handler = ($match != '/' && $match != '') ? $match : $this->_default_route;
         }
 
-
         return new $controller($handler);
     }
 
     /**
-     * Compile the regex for a given route (EXPENSIVE)
+     * Compile the regex for a given route (EXPENSIVE).
+     *
      * @param string $route
+     *
      * @return string
      */
     protected function compile($route)
     {
         if (preg_match_all('`(/|\.|)\[([^:\]]*+)(?::([^:\]]*+))?\](\?|)`', $route, $matches, PREG_SET_ORDER)) {
-
             foreach ($matches as $match) {
                 list($block, $pre, $type, $param, $optional) = $match;
 
@@ -337,12 +342,12 @@ class Router implements RouterInterface
 
                 //Older versions of PCRE require the 'P' in (?P<named>)
                 $pattern = '(?:'
-                    . ($pre !== '' ? $pre : null)
-                    . '('
-                    . ($param !== '' ? "?P<$param>" : null)
-                    . $type
-                    . '))'
-                    . ($optional !== '' ? '?' : null);
+                    .($pre !== '' ? $pre : null)
+                    .'('
+                    .($param !== '' ? "?P<$param>" : null)
+                    .$type
+                    .'))'
+                    .($optional !== '' ? '?' : null);
 
                 $route = str_replace($block, $pattern, $route);
             }

@@ -12,16 +12,17 @@
  */
 
 use \cordillera\base\Application;
+use \cordillera\middlewares\Layout;
 
-/** @var string $content */
-/** @var \cordillera\middlewares\Layout $this */
+/* @var string $content */
+/* @var \cordillera\middlewares\Layout $this */
 ?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php echo $this->getProperty("title", "Cordillera") ?></title>
+    <title><?php echo $this->getProperty('title', 'Cordillera') ?></title>
     <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="<?php echo Application::getRequest()->base_url ?>/media/css/normalize.css">
@@ -46,29 +47,29 @@ use \cordillera\base\Application;
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="<?php echo Application::getRequest()->home ?>">Cordillera framework</a>
-        </div>		
-		<div class="collapse navbar-collapse" id="bs-main-navbar-collapse">         
+        </div>
+		<div class="collapse navbar-collapse" id="bs-main-navbar-collapse">
         </div>
         <!-- /.navbar-collapse -->
     </div>
     <!-- /.container -->
 </nav>
-<?php if (Application::getSession()->get("flash.success")): ?>
+<?php if (Application::getSession()->get('flash.success')): ?>
     <div class="container">
         <div class="alert alert-info" role="alert">
-            <?php echo Application::getSession()->get("flash.success") ?>
+            <?php echo Application::getSession()->get('flash.success') ?>
         </div>
     </div>
 <?php endif ?>
-<?php if (Application::getSession()->get("flash.error")): ?>
+<?php if (Application::getSession()->get('flash.error')): ?>
     <div class="container">
         <div class="alert alert-danger" role="alert">
-            <?php echo Application::getSession()->get("flash.error") ?>
+            <?php echo Application::getSession()->get('flash.error') ?>
         </div>
     </div>
 <?php endif ?>
 <?php echo $content ?>
 <script src="<?php echo Application::getRequest()->base_url ?>/media/js/cordillera.js" type="text/javascript"></script>
-<?php echo $this->publishRegisteredFiles(self::END_SCOPE) ?>
+<?php echo $this->publishRegisteredFiles(Layout::END_SCOPE) ?>
 </body>
 </html>

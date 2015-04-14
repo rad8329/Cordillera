@@ -39,6 +39,7 @@ function dumpx($args)
  * @param string $text
  * @param array $params
  * @param string $source
+ *
  * @return string
  */
 function translate($text, $params = [], $source = 'app')

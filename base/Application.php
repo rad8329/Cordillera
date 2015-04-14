@@ -21,7 +21,7 @@ use cordillera\middlewares\Lang;
 use cordillera\middlewares\Request;
 use cordillera\middlewares\Router;
 use cordillera\middlewares\Session;
-use \cordillera\base\interfaces\Application as ApplicationInterface;
+use cordillera\base\interfaces\Application as ApplicationInterface;
 
 class Application implements ApplicationInterface
 {
@@ -91,6 +91,6 @@ class Application implements ApplicationInterface
 
     public static function halt()
     {
-        Cordillera::$instance->destroy("db");
+        Cordillera::$instance->destroy('db');
     }
 }

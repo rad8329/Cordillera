@@ -43,9 +43,9 @@ class Auth implements AuthInterface
 
     protected function init()
     {
-        if ($this->_session->get("auth.id")) {
-            $this->id = $this->_session->get("auth.id");
-            $this->data = $this->_session->get("auth.data");
+        if ($this->_session->get('auth.id')) {
+            $this->id = $this->_session->get('auth.id');
+            $this->data = $this->_session->get('auth.data');
         }
     }
 
@@ -55,8 +55,8 @@ class Auth implements AuthInterface
      */
     public function login($id, array $data = [])
     {
-        $this->_session->put("auth.id", $id);
-        $this->_session->put("auth.data", $data);
+        $this->_session->put('auth.id', $id);
+        $this->_session->put('auth.data', $data);
         $this->_session->refresh();
     }
 

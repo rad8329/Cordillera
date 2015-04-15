@@ -25,14 +25,14 @@ use \cordillera\middlewares\Layout;
     <title><?php echo $this->getProperty('title', 'Cordillera') ?></title>
     <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo Application::getRequest()->base_url ?>/media/css/normalize.css">
-    <link href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-flash.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-flash.css"/>
     <link rel="stylesheet" type="text/css" href="<?php echo Application::getRequest()->base_url ?>/media/css/cordillera.css">
     <link rel="stylesheet" type="text/css" href="<?php echo Application::getRequest()->base_url ?>/media/css/custom.css">
     <script src="//code.jquery.com/jquery-2.1.3.min.js" type="text/javascript"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js" type="text/javascript"></script>
-    <script src="<?php echo Application::getRequest()->base_url ?>/media/js/bootstrap-confirmation.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+    <script src="<?php echo Application::getRequest()->base_url ?>/media/js/bootstrap-confirmation.min.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js" type="text/javascript"></script>
     <?php echo $this->publishRegisteredFiles() ?>
 </head>
 <body>

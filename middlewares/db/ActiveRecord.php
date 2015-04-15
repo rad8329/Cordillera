@@ -119,8 +119,7 @@ abstract class ActiveRecord
 
         $model = new static();
         $pk_name = $model->getPkName();
-        unset($model);
-
+       
         if (is_array($pk_name)) {
             $pk_condition = [];
             foreach ($pk_name as $pk) {
@@ -155,8 +154,7 @@ abstract class ActiveRecord
         /* @var ActiveRecord $model */
 
         $query = null;
-        $reflect = new \ReflectionClass(get_called_class());
-        $model = $reflect->newInstanceArgs();
+        $model = new static();
 
         if ($args && $args instanceof Query) {
             $query = $args;
@@ -201,8 +199,7 @@ abstract class ActiveRecord
         /* @var ActiveRecord $model */
 
         $query = null;
-        $reflect = new \ReflectionClass(get_called_class());
-        $model = $reflect->newInstanceArgs();
+        $model = new static();
 
         if ($args && $args instanceof Query) {
             $query = $args;
@@ -248,8 +245,7 @@ abstract class ActiveRecord
         /* @var ActiveRecord $model */
 
         $query = null;
-        $reflect = new \ReflectionClass(get_called_class());
-        $model = $reflect->newInstanceArgs();
+        $model = new static();
 
         if ($args && $args instanceof Query) {
             $query = $args;

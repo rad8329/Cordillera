@@ -30,6 +30,7 @@ class Exception extends \Exception implements ExceptionInterface
     const SQL = 10;
     const ERROR = 11;
     const FORBIDDEN = 12;
+    const FILESYSTEM = 13;
 
     /**
      * @var array
@@ -48,6 +49,7 @@ class Exception extends \Exception implements ExceptionInterface
         self::ROUTING => 'RoutingException',
         self::ERROR => 'ErrorException',
         self::FORBIDDEN => 'ForbiddenException',
+        self::FILESYSTEM => 'FileSystemException',
     ];
 
     /**

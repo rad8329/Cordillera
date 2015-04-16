@@ -119,7 +119,7 @@ abstract class ActiveRecord
 
         $model = new static();
         $pk_name = $model->getPkName();
-       
+
         if (is_array($pk_name)) {
             $pk_condition = [];
             foreach ($pk_name as $pk) {

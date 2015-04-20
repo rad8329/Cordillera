@@ -13,6 +13,7 @@
 
 namespace cordillera\middlewares;
 
+use cordillera\base\Application;
 use cordillera\base\interfaces\Exception as ExceptionInterface;
 
 class Exception extends \Exception implements ExceptionInterface
@@ -99,6 +100,10 @@ class Exception extends \Exception implements ExceptionInterface
                 }, $this->getAllTraces())).'</div>';
         } else {
             $html = $this->getMessage();
+        }
+
+        if (Application::getConfig()->get('exception.show_log_id') && Application::getLogger()->last_log_id) {
+            $html .= "<div class=\"clearfix log-info\"><div class=\"pull-right\">log_id: <strong>".Application::getLogger()->last_log_id.'</strong></div></div>';
         }
 
         return $html;

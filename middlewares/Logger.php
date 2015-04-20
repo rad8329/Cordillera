@@ -13,6 +13,7 @@
 
 namespace cordillera\middlewares;
 
+use cordillera\helpers\Crypt;
 use DateTime;
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
@@ -23,6 +24,11 @@ class Logger extends AbstractLogger
      * @var bool|string
      */
     protected $_filename = false;
+
+    /**
+     * @var string
+     */
+    protected $_full_filename = '';
 
     /**
      * @var string
@@ -84,25 +90,35 @@ class Logger extends AbstractLogger
     protected $_permissions = 0777;
 
     /**
-     * @param string $path
-     * @param string $level
-     * @param array  $options
+     * @var string
+     */
+    public $last_log_id = '';
+
+    /**
+     * @param array $options
      *
      * @throws Exception
      */
-    public function __construct($path, $level = LogLevel::DEBUG, array $options = [])
+    public function __construct(array $options = [])
     {
-        $this->_level = $level;
+        $_this = $this;
+        if (!isset($options['level'])) {
+            $options['level'] = CORDILLERA_DEBUG ? LogLevel::DEBUG : LogLevel::WARNING;
+        }
+
+        if (!isset($options['path'])) {
+            $options['path'] = CORDILLERA_APP_DIR.'logs';
+        }
 
         foreach ($options as $option => $value) {
             if (property_exists(get_class($this), '_'.$option)) {
-                $this->{'_'.$option} = $value;
+                $_this->{'_'.$option} = $value;
             } else {
                 throw new Exception("The property [$option] does not exists", 500, Exception::BADARGUMENTS);
             }
         }
 
-        $this->init($path);
+        $this->init();
     }
 
     public function __destruct()
@@ -113,28 +129,27 @@ class Logger extends AbstractLogger
     }
 
     /**
-     * @param $path
-     *
      * @throws Exception
      */
-    public function init($path)
+    private function init()
     {
-        $path = rtrim($path, DS);
-        if (!file_exists($path)) {
-            mkdir($path, $this->_permissions, true);
+        $this->_path = rtrim($this->_path, DS);
+
+        if (!file_exists($this->_path)) {
+            mkdir($this->_path, $this->_permissions, true);
         }
 
         if ($this->_filename) {
-            $this->_path = $path.DS.$this->_filename.'.log';
+            $this->_full_filename = $this->_path.DS.$this->_filename.'.data';
         } else {
-            $this->_path = $path.DS.$this->_prefix.date('Y-m-d').'.log';
+            $this->_full_filename = $this->_path.DS.$this->_prefix.date('Y_m_d').'.data';
         }
 
-        if (file_exists($this->_path) && !is_writable($this->_path)) {
+        if (file_exists($this->_full_filename) && !is_writable($this->_full_filename)) {
             throw new Exception('The file could not be written', 500, Exception::FILESYSTEM);
         }
 
-        $this->_file_handler = fopen($this->_path, 'a');
+        $this->_file_handler = fopen($this->_full_filename, 'a');
 
         if (!$this->_file_handler) {
             throw new Exception('The file could not be opened', 500, Exception::FILESYSTEM);
@@ -150,17 +165,25 @@ class Logger extends AbstractLogger
      */
     public function log($level, $message, array $context = array())
     {
+        $log_id = '';
         if ($this->_levels[$this->_level] < $this->_levels[$level]) {
             return false;
+        }
+
+        if ($this->_levels[$level] <= $this->_levels[LogLevel::ERROR]) {
+            $this->last_log_id = $this->generateId();
+            $log_id = "{{$this->last_log_id}} ";
         }
 
         if (!empty($context)) {
             $message .= PHP_EOL.$this->indent($this->dumpContext($context));
         }
 
-        $message = "[{$this->getTimestamp()}] [".strtoupper($level)."] {$message}".PHP_EOL;
+        $message = "[{$this->getTimestamp()}] [".strtoupper($level)."] {$log_id}{$message}".PHP_EOL;
 
         $this->write($message);
+
+        return true;
     }
 
     /**
@@ -230,5 +253,13 @@ class Logger extends AbstractLogger
         }
 
         return str_replace(array('\\\\', '\\\''), array('\\', '\''), rtrim($export));
+    }
+
+    /**
+     * @return string
+     */
+    public function generateId()
+    {
+        return implode('-', str_split(strtoupper(Crypt::create(12)), 4));
     }
 }

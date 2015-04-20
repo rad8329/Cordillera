@@ -272,6 +272,7 @@ abstract class ActiveRecord
         $stmt = $model->getDb()->prepare($query->toSql());
         $stmt->execute($query->params);
         $records = $stmt->fetchColumn();
+
         $stmt->closeCursor();
 
         return $records;

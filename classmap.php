@@ -19,4 +19,5 @@ return [
     'db' => "cordillera\\middlewares\\db\\Connection",
     'lang' => "cordillera\\middlewares\\Lang",
     'controller' => "cordillera\\middlewares\\Controller",
+    'logger' => "cordillera\\middlewares\\Logger",
 ];

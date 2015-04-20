@@ -114,15 +114,15 @@ class Request
 
         if ($this->_csrf) {
             if (!$this->csrf_id) {
-                $this->csrf_id = Crypt::create_iv(10);
+                $this->csrf_id = Crypt::create(10);
                 $this->_session->put('request.csrf_id', $this->csrf_id);
             }
             if (!$this->csrf_value) {
-                $this->csrf_value = hash('sha256', Crypt::create_iv(500));
+                $this->csrf_value = hash('sha256', Crypt::create(500));
                 $this->_session->put('request.csrf_value', $this->csrf_value);
             }
             if (!$this->salt) {
-                $this->salt = Crypt::create_iv(32);
+                $this->salt = Crypt::create(32);
                 $this->_session->put('request.salt', $this->salt);
             }
         }

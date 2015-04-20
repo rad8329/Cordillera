@@ -32,7 +32,7 @@ class Crypt
      *
      * @return string
      */
-    public static function create_iv($lenght)
+    public static function create($lenght)
     {
         return bin2hex(mcrypt_create_iv($lenght, MCRYPT_RAND));
     }

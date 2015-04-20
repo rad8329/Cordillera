@@ -133,6 +133,10 @@ class Response
                 $response['trace'] = $exception->getAllTraces();
             }
 
+            if (Application::getConfig()->get('exception.show_log_id') && Application::getLogger()->last_log_id) {
+                $response['log_id'] = Application::getLogger()->last_log_id;
+            }
+
             self::json($response);
         } else {
             $layout = new Layout('error');

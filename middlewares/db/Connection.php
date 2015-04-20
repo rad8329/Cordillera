@@ -13,6 +13,7 @@
 
 namespace cordillera\middlewares\db;
 
+use cordillera\base\Application;
 use cordillera\middlewares\Exception;
 use PDO;
 
@@ -34,6 +35,11 @@ class Connection extends PDO
     protected $_password;
 
     /**
+     * @var string
+     */
+    public $_last_statement = '';
+
+    /**
      * @var array
      */
     protected $_options = [
@@ -46,8 +52,6 @@ class Connection extends PDO
      * @param string $username
      * @param string $password
      * @param array  $options
-     *
-     * @throws Exception
      */
     public function __construct($dsn, $username, $password, array $options = [])
     {
@@ -56,14 +60,31 @@ class Connection extends PDO
         $this->_password = $password;
         $this->_options = array_merge($this->_options, $options);
 
-        $this->init();
+        $this->init($dsn, $username, $password, $options);
     }
 
-    protected function init()
+    /**
+     * @param string $dsn
+     * @param string $username
+     * @param string $password
+     * @param array  $options
+     *
+     * @throws Exception
+     */
+    protected function init($dsn, $username, $password, array $options = [])
     {
         try {
-            parent::__construct($this->_dsn, $this->_username, $this->_password, $this->_options);
+            //With parameters of method scope, because if there is a exception, this object is destroyed
+            parent::__construct($dsn, $username, $password, $options);
+            $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, ['\cordillera\middlewares\db\Statement', [$this]]);
         } catch (\PDOException $e) {
+            Application::getLogger()->critical('DB connection failed', [
+                    'dsn' => $dsn,
+                    'username' => $username,
+                    'password' => $password,
+                    'options' => $options,
+                ]
+            );
             throw new Exception($e->getMessage(), 500, Exception::DBCONNECTION);
         }
     }
@@ -72,33 +93,18 @@ class Connection extends PDO
      * @param string $statement
      * @param array  $driver_options
      *
-     * @return \PDOStatement
+     * @return Statement
      *
      * @throws Exception
      */
     public function prepare($statement, $driver_options = [])
     {
         try {
+            $this->_last_statement = $statement;
+
             return parent::prepare($statement, $driver_options);
         } catch (\PDOException $e) {
             throw new Exception($e->getMessage(), 500, Exception::DBSTATEMENT);
-        }
-    }
-
-    /**
-     * @param array $input_parameters
-     *
-     * @return mixed
-     *
-     * @throws Exception
-     */
-    public function execute(array $input_parameters = null)
-    {
-        try {
-            //$this->getDb()->beginTransaction();
-            return $this->execute($input_parameters);
-        } catch (\PDOException $e) {
-            throw new Exception($e->getMessage(), 500, Exception::SQL);
         }
     }
 }

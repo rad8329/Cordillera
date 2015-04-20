@@ -18,6 +18,7 @@ use cordillera\middlewares\Config;
 use cordillera\middlewares\Controller;
 use cordillera\middlewares\db\Connection;
 use cordillera\middlewares\Lang;
+use cordillera\middlewares\Logger;
 use cordillera\middlewares\Request;
 use cordillera\middlewares\Router;
 use cordillera\middlewares\Session;
@@ -53,6 +54,11 @@ interface Application
      * @return Lang
      */
     public static function getLang();
+
+    /**
+     * @return Logger
+     */
+    public static function getLogger();
 
     /**
      * @return Config

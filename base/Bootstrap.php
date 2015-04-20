@@ -63,6 +63,12 @@ class  Bootstrap
             ], $classmap_source['session']);
         });
 
+        Cordillera::$instance->share('logger', function () use ($classmap, $classmap_source) {
+            return Cordillera::factory($classmap['logger'], [
+                Application::getConfig()->get('logger', []),
+            ], $classmap_source['logger']);
+        });
+
         Cordillera::$instance->share('request', function () use ($classmap, $classmap_source) {
             return Cordillera::factory($classmap['request'], [
                 Application::getSession(),
@@ -114,6 +120,9 @@ class  Bootstrap
             $output = ob_get_contents();
             ob_end_clean();
 
+            //Application::getLogger()->debug("test",['logger'=>Application::getLogger()]);
+            //dumpx(Application::getLogger()->);
+           // dumpx(Application::getLogger());
             if (!(Cordillera::$exception instanceof Exception)) {
                 echo $output;
             } else {

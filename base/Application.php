@@ -18,6 +18,7 @@ use cordillera\middlewares\Controller;
 use cordillera\middlewares\db\Connection;
 use cordillera\middlewares\Auth;
 use cordillera\middlewares\Lang;
+use cordillera\middlewares\Logger;
 use cordillera\middlewares\Request;
 use cordillera\middlewares\Router;
 use cordillera\middlewares\Session;
@@ -39,6 +40,14 @@ class Application implements ApplicationInterface
     public static function getRequest()
     {
         return Cordillera::get('request');
+    }
+
+    /**
+     * @return Logger
+     */
+    public static function getLogger()
+    {
+        return Cordillera::get('logger');
     }
 
     /**

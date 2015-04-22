@@ -27,11 +27,11 @@ use \cordillera\middlewares\Layout;
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-flash.css"/>
-    <link rel="stylesheet" type="text/css" href="<?php echo Application::getRequest()->base_url ?>/media/css/cordillera.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo Application::getRequest()->base_url ?>/media/css/custom.css">
+    <link rel="stylesheet" type="text/css" href="<?php echo Application::getRequest()->base_url ?>media/css/cordillera.css">
+    <link rel="stylesheet" type="text/css" href="<?php echo Application::getRequest()->base_url ?>media/css/custom.css">
     <script src="//code.jquery.com/jquery-2.1.3.min.js" type="text/javascript"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js" type="text/javascript"></script>
-    <script src="<?php echo Application::getRequest()->base_url ?>/media/js/bootstrap-confirmation.min.js" type="text/javascript"></script>
+    <script src="<?php echo Application::getRequest()->base_url ?>media/js/bootstrap-confirmation.min.js" type="text/javascript"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js" type="text/javascript"></script>
     <?php echo $this->publishRegisteredFiles() ?>
 </head>
@@ -69,7 +69,7 @@ use \cordillera\middlewares\Layout;
     </div>
 <?php endif ?>
 <?php echo $content ?>
-<script src="<?php echo Application::getRequest()->base_url ?>/media/js/cordillera.js" type="text/javascript"></script>
+<script src="<?php echo Application::getRequest()->base_url ?>media/js/cordillera.js" type="text/javascript"></script>
 <?php echo $this->publishRegisteredFiles(Layout::END_SCOPE) ?>
 </body>
 </html>

@@ -25,7 +25,7 @@ class Url
      */
     public static function relative($handler, $params = [])
     {
-        return Application::getRequest()->base_url.Application::getRouter()->generate($handler, $params);
+        return substr(Application::getRequest()->base_url, 0, -1).Application::getRouter()->generate($handler, $params);
     }
 
     /**
@@ -36,6 +36,6 @@ class Url
      */
     public static function absolute($handler, $params = [])
     {
-        return Application::getRequest()->absolute_url.Application::getRouter()->generate($handler, $params);
+        return substr(Application::getRequest()->base_url, 0, -1).Application::getRouter()->generate($handler, $params);
     }
 }

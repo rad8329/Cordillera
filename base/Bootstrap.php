@@ -120,9 +120,6 @@ class  Bootstrap
             $output = ob_get_contents();
             ob_end_clean();
 
-            //Application::getLogger()->debug("test",['logger'=>Application::getLogger()]);
-            //dumpx(Application::getLogger()->);
-           // dumpx(Application::getLogger());
             if (!(Cordillera::$exception instanceof Exception)) {
                 echo $output;
             } else {

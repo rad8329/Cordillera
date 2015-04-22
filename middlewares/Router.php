@@ -196,90 +196,87 @@ class Router implements RouterInterface
     public function match($request_url = null)
     {
         $params = [];
-
-        // set Request Url if it isn't passed as parameter
-        if ($request_url === null) {
-            $request_url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
-        }
-        // strip base path from request url
-        if (($strpos = strpos($request_url, $this->_script_name)) !== false) {
-            $request_url = substr($request_url, strlen($this->_base_path.'/'.$this->_script_name));
-        } else {
-            $request_url = substr($request_url, strlen($this->_base_path));
-        }
-
-        // Strip query string (?a=b) from Request Url
-        if (($strpos = strpos($request_url, '?')) !== false) {
-            $request_url = substr($request_url, 0, $strpos);
-        }
-
-        // Force request_order to be GP
-        // http://www.mail-archive.com/internals@lists.php.net/msg33119.html
         $request = $_GET;
 
-        if (isset($request['h'])) {
-            // If the URI is full named
+        if (isset($request['h']) && $request_url == null) {
+            $request_url = $request['h'];
             unset($request['h']);
-
-            return [
-                'friendly' => false,
-                'handler' => $_GET['h'],
-                'params' => $request,
-            ];
         } else {
-            foreach ($this->_routes as $handler) {
-                list($_route, $target) = $handler;
-                // Check for a wildcard (matches all)
-                if ($_route === '*') {
-                    $match = true;
-                } elseif (isset($_route[0]) && $_route[0] === '@') {
-                    $pattern = '`'.substr($_route, 1).'`u';
-                    $match = preg_match($pattern, $request_url, $params);
-                } else {
-                    $route = null;
-                    $regex = false;
-                    $j = 0;
-                    $n = isset($_route[0]) ? $_route[0] : null;
-                    $i = 0;
 
-                    // Find the longest non-regex substring and match it against the URI
-                    while (true) {
-                        if (!isset($_route[$i])) {
-                            break;
-                        } elseif (false === $regex) {
-                            $c = $n;
-                            $regex = $c === '[' || $c === '(' || $c === '.';
-                            if (false === $regex && false !== isset($_route[$i + 1])) {
-                                $n = $_route[$i + 1];
-                                $regex = $n === '?' || $n === '+' || $n === '*' || $n === '{';
-                            }
-                            if (false === $regex && $c !== '/' && (!isset($request_url[$j]) || $c !== $request_url[$j])) {
-                                continue 2;
-                            }
-                            $j++;
+            // set Request Url if it isn't passed as parameter
+            if ($request_url === null) {
+                $request_url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
+            }
+
+            // strip base path from request url
+            if (($strpos = strpos($request_url, $this->_script_name)) !== false) {
+                $_tmp_request = explode($this->_script_name, $request_url);
+                $request_url = ltrim($_tmp_request[1], '/');
+                unset($_tmp_request);
+            } else {
+                $request_url = substr($request_url, strlen($this->_base_path));
+            }
+
+            // Strip query string (?a=b) from Request Url
+            if (($strpos = strpos($request_url, '?')) !== false) {
+                $request_url = substr($request_url, 0, $strpos);
+            }
+        }
+
+        $request_url = '/'.$request_url;
+
+        foreach ($this->_routes as $handler) {
+            list($_route, $target) = $handler;
+            // Check for a wildcard (matches all)
+            if ($_route === '*') {
+                $match = true;
+            } elseif (isset($_route[0]) && $_route[0] === '@') {
+                $pattern = '`'.substr($_route, 1).'`u';
+                $match = preg_match($pattern, $request_url, $params);
+            } else {
+                $route = null;
+                $regex = false;
+                $j = 0;
+                $n = isset($_route[0]) ? $_route[0] : null;
+                $i = 0;
+
+                // Find the longest non-regex substring and match it against the URI
+                while (true) {
+                    if (!isset($_route[$i])) {
+                        break;
+                    } elseif (false === $regex) {
+                        $c = $n;
+                        $regex = $c === '[' || $c === '(' || $c === '.';
+                        if (false === $regex && false !== isset($_route[$i + 1])) {
+                            $n = $_route[$i + 1];
+                            $regex = $n === '?' || $n === '+' || $n === '*' || $n === '{';
                         }
-                        $route .= $_route[$i++];
+                        if (false === $regex && $c !== '/' && (!isset($request_url[$j]) || $c !== $request_url[$j])) {
+                            continue 2;
+                        }
+                        $j++;
                     }
-
-                    $regex = $this->compile($route);
-                    $match = preg_match($regex, $request_url, $params);
+                    $route .= $_route[$i++];
                 }
 
-                if (($match == true || $match > 0)) {
-                    if ($params) {
-                        foreach ($params as $key => $value) {
-                            if (is_numeric($key)) {
-                                unset($params[$key]);
-                            }
+                $regex = $this->compile($route);
+                $match = preg_match($regex, $request_url, $params);
+            }
+
+            if (($match == true || $match > 0)) {
+                if ($params) {
+                    foreach ($params as $key => $value) {
+                        if (is_numeric($key)) {
+                            unset($params[$key]);
                         }
                     }
-
-                    return [
-                        'friendly' => true,
-                        'handler' => $target,
-                        'params' => $params,
-                    ];
                 }
+
+                return [
+                    'friendly' => true,
+                    'handler' => $target,
+                    'params' => $params,
+                ];
             }
         }
 

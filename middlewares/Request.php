@@ -100,8 +100,11 @@ class Request
         $this->server_name = $_SERVER['SERVER_NAME'];
 
         $tmp_base_url = array_filter(explode('/'.$this->script_name, $_SERVER['PHP_SELF']));
-        $this->base_url = count($tmp_base_url) > 1 ? $tmp_base_url[0] : pathinfo($_SERVER['PHP_SELF'])['dirname'];
 
+        $this->base_url = count($tmp_base_url) > 1 ? $tmp_base_url[0] : str_replace("\\", '/', str_replace($this->script_name, '', pathinfo($_SERVER['PHP_SELF'])['dirname']));
+        //dump( $this->base_url);
+        $this->base_url = strlen($this->base_url) > 1 ? $this->base_url.'/' : $this->base_url;
+///dumpx($this->base_url);
         $this->port = $_SERVER['SERVER_PORT'];
         $this->home = $this->base_url.($this->script_name != 'index.php' ? '/'.$this->script_name : '');
 

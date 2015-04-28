@@ -11,11 +11,11 @@
  * Made with love in Medellín
  */
 
-namespace cordillera\middlewares\db;
+namespace cordillera\base\traits;
 
 use cordillera\helpers\Crypt;
 
-trait Model
+trait Form
 {
     /**
      * @var array
@@ -80,8 +80,12 @@ trait Model
      *
      * @return string
      */
-    public function fieldName($name)
+    public function field($name)
     {
+        if (property_exists($this, $name)) {
+            return Crypt::requestVar((new \ReflectionClass($this))->getShortName()).'['.Crypt::requestVar($name).']';
+        }
+
         return Crypt::requestVar($name);
     }
 }

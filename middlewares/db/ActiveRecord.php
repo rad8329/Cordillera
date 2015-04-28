@@ -13,12 +13,13 @@
 
 namespace cordillera\middlewares\db;
 
+use cordillera\base\traits\Form;
 use cordillera\middlewares\Exception;
 use cordillera\base\Application;
 
 abstract class ActiveRecord
 {
-    use Model;
+    use Form;
 
     /**
      * @var string Table name

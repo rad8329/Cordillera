@@ -11,8 +11,10 @@
  * Made with love in Medellín
  */
 
-/* @var \cordillera\widgets\Widget $this */
-?>
-<div <?= $this->bind($this->_html_options) ?>>
-<?= $this->renderContent()?>
-</div><!-- #<?= $this->id ?> -->
+namespace cordillera\widgets\grid;
+
+use cordillera\widgets\Widget;
+
+class Paginator extends Widget
+{
+}

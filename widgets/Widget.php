@@ -14,9 +14,9 @@
 namespace cordillera\widgets;
 
 use cordillera\base\Application;
+use cordillera\base\interfaces\Display;
 use cordillera\middlewares\Exception;
 use cordillera\middlewares\Layout;
-use cordillera\base\interfaces\Display;
 
 abstract class Widget implements Display
 {
@@ -29,6 +29,11 @@ abstract class Widget implements Display
      * @var array
      */
     protected $_html_options = [];
+
+    /**
+     * @var \Closure
+     */
+    protected $_renderer;
 
     /**
      * @var string
@@ -50,7 +55,7 @@ abstract class Widget implements Display
      */
     public function __construct(array $config = [])
     {
-        $this->init($config);
+        $this->setup($config);
     }
 
     /**
@@ -58,9 +63,11 @@ abstract class Widget implements Display
      *
      * @throws Exception
      */
-    protected function init(array $config = [])
+    protected function setup(array $config = [])
     {
-        static::$counter++;
+        if (isset($config['renderer']) && (!($config['renderer'] instanceof \Closure) && !is_callable($config['renderer']))) {
+            throw new Exception(Application::getLang()->translate('{renderer} must be callable'), 500, Exception::BADARGUMENTS);
+        }
 
         if (isset($config['layout']) && !($config['layout'] instanceof Layout)) {
             throw new Exception(Application::getLang()->translate('{layout} must be instace of Layout objetc'), 500, Exception::BADARGUMENTS);
@@ -94,48 +101,16 @@ abstract class Widget implements Display
     }
 
     /**
-     * @param array $config
-     *
-     * @return Widget
-     */
-    public static function widget(array $config = [])
-    {
-        $widget = new static($config);
-        $widget->run();
-
-        return $widget;
-    }
-
-    /**
-     * @param array $attributes
+     * @param string $template
      *
      * @return string
      */
-    public function bind(array $attributes = [])
-    {
-        return implode(' ', array_map(function ($attribute, $value) {
-                return "{$attribute}=\"{$value}\"";
-            }, array_keys($attributes), $attributes)
-        );
-    }
-
-    /**     
-     * @return string
-     */
-    public function render()
-    {
-        return $this->fetch();
-    }
-
-    /**     
-     * @return string
-     */
-    protected function fetch()
+    protected function renderFile($template)
     {
         ob_start();
 
-        $app_template_file = CORDILLERA_APP_DIR.$this->_template.'.php';
-        $cordillera_template_file = CORDILLERA_DIR.$this->_template.'.php';
+        $app_template_file = CORDILLERA_APP_DIR.$template.'.php';
+        $cordillera_template_file = CORDILLERA_DIR.$template.'.php';
 
         if (is_file($app_template_file)) {
             include $app_template_file;
@@ -156,8 +131,47 @@ abstract class Widget implements Display
         return $output;
     }
 
-    protected function run()
+    /**
+     * @param array $config
+     *
+     * @return Widget
+     */
+    public static function widget(array $config = [])
     {
-        
+        static::$counter++;
+        $widget = new static($config);
+
+        return $widget;
+    }
+
+    /**
+     * @param array $attributes
+     *
+     * @return string
+     */
+    protected function bind(array $attributes = [])
+    {
+        return implode(' ', array_map(function ($attribute, $value) {
+                return "{$attribute}=\"{$value}\"";
+            }, array_keys($attributes), $attributes)
+        );
+    }
+
+    /**
+     * @return string
+     */
+    protected function renderContent()
+    {
+        if ($this->_renderer) {
+            return call_user_func_array($this->_renderer, [$this]);
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function render()
+    {
+        return $this->renderFile($this->_template);
     }
 }

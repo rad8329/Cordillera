@@ -17,5 +17,76 @@ use cordillera\widgets\Widget;
 
 class Column extends Widget
 {
-	
+    /**
+     * @return string
+     */
+    protected $_attribute;
+
+    /**
+     * @return string
+     */
+    protected $_header;
+
+    /**
+     * @var mixed
+     */
+    protected $_value;
+
+    /**
+     * @var mixed
+     */
+    protected $_record;
+
+    /**
+     * @var Filter
+     */
+    protected $_filter;
+
+    /**
+     * @return string
+     */
+    protected function renderHeader()
+    {
+    }
+
+    /**
+     * @return string
+     */
+    protected function renderFilter()
+    {
+        if (isset($this->_filter)) {
+            return $this->_filter->render();
+        }
+    }
+
+    /**
+     * @return string
+     */
+    protected function renderData()
+    {
+    }
+
+    /**
+     * @return string
+     */
+    protected function renderSummary()
+    {
+    }
+
+    /**
+     * @return string
+     */
+    public function render($part = 'data')
+    {
+        switch ($part) {
+            case 'data':
+                return $this->renderData();
+            case 'filter':
+                return $this->renderFilter();
+            case 'summary':
+                return $this->renderSummary();
+            case 'header':
+                return $this->renderHeader();
+        }
+    }
 }

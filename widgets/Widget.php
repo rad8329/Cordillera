@@ -15,8 +15,10 @@ namespace cordillera\widgets;
 
 use cordillera\base\Application;
 use cordillera\middlewares\Exception;
+use cordillera\middlewares\Layout;
+use cordillera\base\interfaces\Display;
 
-abstract class Widget
+abstract class Widget implements Display
 {
     /**
      * @var int
@@ -24,14 +26,24 @@ abstract class Widget
     protected static $counter = 0;
 
     /**
-     * @var string
-     */
-    public $id;
-
-    /**
      * @var array
      */
     protected $_html_options = [];
+
+    /**
+     * @var string
+     */
+    protected $_template = 'widgets/views/layout';
+
+    /**
+     * @var Layout
+     */
+    public $layout;
+
+    /**
+     * @var string
+     */
+    public $id;
 
     /**
      * @param array $config
@@ -49,6 +61,14 @@ abstract class Widget
     protected function init(array $config = [])
     {
         static::$counter++;
+
+        if (isset($config['layout']) && !($config['layout'] instanceof Layout)) {
+            throw new Exception(Application::getLang()->translate('{layout} must be instace of Layout objetc'), 500, Exception::BADARGUMENTS);
+        }
+
+        if (isset($config['template']) && !is_string($config['template'])) {
+            throw new Exception(Application::getLang()->translate('{template} must be a string'), 500, Exception::BADARGUMENTS);
+        }
 
         if (isset($config['html_options']) && !is_array($config['html_options'])) {
             throw new Exception(Application::getLang()->translate('{html_options} must be an array'), 500, Exception::BADARGUMENTS);
@@ -76,7 +96,7 @@ abstract class Widget
     /**
      * @param array $config
      *
-     * @return WidgetDisplay
+     * @return Widget
      */
     public static function widget(array $config = [])
     {
@@ -94,11 +114,50 @@ abstract class Widget
     public function bind(array $attributes = [])
     {
         return implode(' ', array_map(function ($attribute, $value) {
-            return "{$attribute}=\"{$value}\"";
-        }, array_keys($attributes), $attributes));
+                return "{$attribute}=\"{$value}\"";
+            }, array_keys($attributes), $attributes)
+        );
+    }
+
+    /**     
+     * @return string
+     */
+    public function render()
+    {
+        return $this->fetch();
+    }
+
+    /**     
+     * @return string
+     */
+    protected function fetch()
+    {
+        ob_start();
+
+        $app_template_file = CORDILLERA_APP_DIR.$this->_template.'.php';
+        $cordillera_template_file = CORDILLERA_DIR.$this->_template.'.php';
+
+        if (is_file($app_template_file)) {
+            include $app_template_file;
+        } elseif (!is_file($app_template_file) && is_file($cordillera_template_file)) {
+            include $cordillera_template_file;
+        } else {
+            throw new Exception(
+                Application::getLang()->translate('The widget view %s not found', [$this->_template]),
+                500,
+                Exception::VIEW
+            );
+        }
+
+        $output = ob_get_contents();
+
+        ob_end_clean();
+
+        return $output;
     }
 
     protected function run()
     {
+        
     }
 }

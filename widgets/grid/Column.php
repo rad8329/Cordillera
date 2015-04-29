@@ -17,4 +17,5 @@ use cordillera\widgets\Widget;
 
 class Column extends Widget
 {
+	
 }

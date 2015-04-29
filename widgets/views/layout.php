@@ -10,8 +10,10 @@
  *
  * Made with love in Medellín
  */
+
 /* @var \cordillera\widgets\Widget $this */
 ?>
 <div <?= $this->bind($this->_html_options) ?>>
 
-</div>
+</div><!-- #<?= $this->id ?> -->
+

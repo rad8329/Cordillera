@@ -13,6 +13,7 @@
 
 namespace cordillera\widgets;
 
-class Grid extends WidgetDisplay
+class Grid extends Widget
 {
+	
 }

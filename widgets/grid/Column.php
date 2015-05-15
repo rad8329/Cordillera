@@ -62,7 +62,7 @@ class Column extends Widget
     /**
      * @return string
      */
-    protected function renderData()
+    protected function renderContent()
     {
     }
 
@@ -76,11 +76,11 @@ class Column extends Widget
     /**
      * @return string
      */
-    public function render($part = 'data')
+    public function render($part = 'content')
     {
         switch ($part) {
-            case 'data':
-                return $this->renderData();
+            case 'content':
+                return $this->renderContent();
             case 'filter':
                 return $this->renderFilter();
             case 'summary':

@@ -23,7 +23,7 @@ abstract class Widget implements Display
     /**
      * @var int
      */
-    protected static $counter = 0;
+    protected static $_counter = 0;
 
     /**
      * @var array
@@ -90,7 +90,7 @@ abstract class Widget implements Display
         }
 
         if (!$this->id) {
-            $this->id = 'widget_'.static::$counter;
+            $this->id = 'widget_'.static::$_counter;
         }
 
         if (isset($this->_html_options['id'])) {
@@ -138,7 +138,7 @@ abstract class Widget implements Display
      */
     public static function widget(array $config = [])
     {
-        static::$counter++;
+        static::$_counter++;
         $widget = new static($config);
 
         return $widget;

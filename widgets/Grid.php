@@ -16,6 +16,7 @@ namespace cordillera\widgets;
 use cordillera\base\Application;
 use cordillera\middlewares\db\DataProvider;
 use cordillera\middlewares\Exception;
+use cordillera\widgets\grid\Column;
 
 class Grid extends Widget
 {
@@ -25,9 +26,9 @@ class Grid extends Widget
     protected $_data_provider;
 
     /**
-     * @var Filter[]
+     * @var Column[]
      */
-    protected $_filters = [];
+    protected $_columns = [];
 
     /**
      * @param array $config
@@ -68,6 +69,9 @@ class Grid extends Widget
      */
     public function renderHeaders()
     {
+        foreach($this->_columns as $colum){
+
+        }
         return '<div>headers</div>';
     }
 
@@ -103,10 +107,7 @@ class Grid extends Widget
         if ($this->_renderer) {
             return call_user_func_array($this->_renderer, [$this]);
         } else {
-            return $this->renderHeaders().
-            $this->renderBody().
-            $this->renderSummaries().
-            $this->renderPagination();
+            return $this->renderHeaders() . $this->renderBody() . $this->renderSummaries() . $this->renderPagination();
         }
     }
 }

@@ -40,6 +40,21 @@ interface Controller
     /**
      * @param callable $definition
      */
+    public function head(\Closure $definition);
+
+    /**
+     * @param callable $definition
+     */
+    public function trace(\Closure $definition);
+
+    /**
+     * @param callable $definition
+     */
+    public function options(\Closure $definition);
+
+    /**
+     * @param callable $definition
+     */
     public function filters(\Closure $definition);
 
     /**

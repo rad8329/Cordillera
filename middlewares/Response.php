@@ -19,15 +19,26 @@ class Response
 {
     public static function setSecurityHeaders()
     {
-        header('x-content-type-options: nosniff');
-        header('x-frame-options: sameorigin');
-        header('x-permitted-cross-domain-policies: master-only');
-        header('x-xss-protection: 1; mode=block');
-        header('X-Powered-By: PHP');
+        self::setHeader('x-content-type-options', 'nosniff');
+        self::setHeader('x-frame-options', 'sameorigin');
+        self::setHeader('x-permitted-cross-domain-policies', 'master-only');
+        self::setHeader('x-xss-protection', '1; mode=block');
+        self::setHeader('X-Powered-By', 'PHP');
     }
 
     /**
-     * @param int  $statusCode HTTP status code
+     * @param string $header
+     * @param null|string $value
+     * @param bool $replace
+     * @param null|int $http_response_code
+     */
+    public static function setHeader($header, $value = null, $replace = true, $http_response_code = null)
+    {
+        header("$header" . ($value ? ": $value" : ""), $replace, $http_response_code);
+    }
+
+    /**
+     * @param int $statusCode HTTP status code
      * @param bool $exit
      */
     public static function headerStatus($statusCode, $exit = false)
@@ -90,12 +101,11 @@ class Response
         }
 
         if (isset($status_codes[$statusCode])) {
-            $status_string = $statusCode.' '.$status_codes[$statusCode];
-            header($_SERVER['SERVER_PROTOCOL'].' '.$status_string, true, $statusCode);
-            if ($exit) {
-                exit;
-            }
-        } elseif ($exit) {
+            $status_string = $statusCode . ' ' . $status_codes[$statusCode];
+            self::setHeader($_SERVER['SERVER_PROTOCOL'] . ' ' . $status_string, null, true, $statusCode);
+        }
+
+        if ($exit) {
             exit;
         }
     }
@@ -105,7 +115,7 @@ class Response
      */
     public static function json($content)
     {
-        header('Content-Type: application/json');
+        self::setHeader('Content-Type', 'application/json');
         echo json_encode($content, JSON_PRETTY_PRINT);
     }
 
@@ -115,7 +125,7 @@ class Response
     public static function raw($content)
     {
         if (isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
-            header('X-UA-Compatible: IE=edge,chrome=1');
+            self::setHeader('X-UA-Compatible', 'IE=edge,chrome=1');
         }
 
         echo $content;

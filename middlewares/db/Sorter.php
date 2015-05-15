@@ -18,17 +18,17 @@ class Sorter
     /**
      * @var string
      */
-    protected $request_param = '';
+    public $request_param = '';
 
     /**
      * @var string
      */
-    protected $attribute = '';
+    public $attribute = '';
 
     /**
      * @var string
      */
-    protected $order = '';
+    public $order = '';
 
     /**
      * @param $rquest_param

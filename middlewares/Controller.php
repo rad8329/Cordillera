@@ -16,6 +16,7 @@ namespace cordillera\middlewares;
 use cordillera\base\Application;
 use cordillera\base\Cordillera;
 use cordillera\base\interfaces\Controller as ControllerIterface;
+use cordillera\helpers\Cors;
 
 class Controller implements ControllerIterface
 {
@@ -167,6 +168,10 @@ class Controller implements ControllerIterface
         }
     }
 
+    public function corsHeaders(){
+        Cors::setup();
+    }
+
     /**
      * @throws Exception
      */
@@ -175,6 +180,14 @@ class Controller implements ControllerIterface
         if (!Request::isAjax()) {
             throw new Exception(Application::getLang()->translate('Bad request'), 400, Exception::BADREQUEST);
         }
+    }
+
+    /**
+     * @param callable $definition
+     */
+    public function filters(\Closure $definition)
+    {
+        $this->_actions['filters'] = $definition;
     }
 
     /**
@@ -212,8 +225,24 @@ class Controller implements ControllerIterface
     /**
      * @param callable $definition
      */
-    public function filters(\Closure $definition)
+    public function head(\Closure $definition)
     {
-        $this->_actions['filters'] = $definition;
+        $this->_actions['head'] = $definition;
+    }
+
+    /**
+     * @param callable $definition
+     */
+    public function options(\Closure $definition)
+    {
+        $this->_actions['options'] = $definition;
+    }
+
+    /**
+     * @param callable $definition
+     */
+    public function trace(\Closure $definition)
+    {
+        $this->_actions['trace'] = $definition;
     }
 }

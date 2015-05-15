@@ -13,6 +13,7 @@
 
 namespace cordillera\middlewares;
 
+use cordillera\base\interfaces\Application;
 use cordillera\helpers\Crypt;
 
 class Request
@@ -82,9 +83,15 @@ class Request
      */
     public static $payload = [];
 
+
+    /**
+     * @var array
+     */
+    public $headers = [];
+
     /**
      * @param Session $session
-     * @param bool    $csrf
+     * @param bool $csrf
      */
     public function __construct(Session $session, $csrf = true)
     {
@@ -95,21 +102,22 @@ class Request
 
     protected function init()
     {
+        $this->headers = getallheaders();
         $this->script_name = basename($_SERVER['SCRIPT_NAME']);
         $this->ssl = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? true : false;
         $this->server_name = $_SERVER['SERVER_NAME'];
 
-        $tmp_base_url = array_filter(explode('/'.$this->script_name, $_SERVER['PHP_SELF']));
+        $tmp_base_url = array_filter(explode('/' . $this->script_name, $_SERVER['PHP_SELF']));
 
         $this->base_url = count($tmp_base_url) > 1 ? $tmp_base_url[0] : str_replace("\\", '/', str_replace($this->script_name, '', pathinfo($_SERVER['PHP_SELF'])['dirname']));
-        //dump( $this->base_url);
-        $this->base_url = strlen($this->base_url) > 1 ? $this->base_url.'/' : $this->base_url;
-///dumpx($this->base_url);
-        $this->port = $_SERVER['SERVER_PORT'];
-        $this->home = $this->base_url.($this->script_name != 'index.php' ? '/'.$this->script_name : '');
 
-        $this->absolute_url = ($this->ssl ? 'https' : 'http').'://';
-        $this->absolute_url .= $this->server_name.(($this->port == 80) ? '' : ':'.$this->port).$this->base_url;
+        $this->base_url = strlen($this->base_url) > 1 ? $this->base_url . '/' : $this->base_url;
+
+        $this->port = $_SERVER['SERVER_PORT'];
+        $this->home = $this->base_url . ($this->script_name != 'index.php' ? '/' . $this->script_name : '');
+
+        $this->absolute_url = ($this->ssl ? 'https' : 'http') . '://';
+        $this->absolute_url .= $this->server_name . (($this->port == 80) ? '' : ':' . $this->port) . $this->base_url;
 
         $this->csrf_id = $this->_session->get('request.csrf_id');
         $this->csrf_value = $this->_session->get('request.csrf_value');
@@ -146,6 +154,18 @@ class Request
     /**
      * @return bool
      */
+    public static function isOptions()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
     public static function isAjax()
     {
         if (!(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'))) {
@@ -157,7 +177,7 @@ class Request
 
     /**
      * @param string $name
-     * @param mixed  $default
+     * @param mixed $default
      *
      * @return mixed
      */
@@ -189,7 +209,7 @@ class Request
 
     /**
      * @param string $name
-     * @param mixed  $default
+     * @param mixed $default
      *
      * @return mixed
      */
@@ -200,7 +220,7 @@ class Request
 
     /**
      * @param string $name
-     * @param mixed  $default
+     * @param mixed $default
      *
      * @return mixed
      */
@@ -227,11 +247,39 @@ class Request
     }
 
     /**
+     * Convert any string (including php headers with HTTP prefix) to header format like :
+     *  * X-Pingother -> HTTP_X_PINGOTHER
+     *  * X PINGOTHER -> HTTP_X_PINGOTHER
+     * @param string $string string to convert
+     * @return string the result in "php $_SERVER header" format
+     */
+    public static function headerizeToPhp($string)
+    {
+        return 'HTTP_' . strtoupper(str_replace([' ', '-'], ['_', '_'], $string));
+    }
+
+    /**
+     * Convert any string (including php headers with HTTP prefix) to header format like :
+     *  * X-PINGOTHER -> X-Pingother
+     *  * X_PINGOTHER -> X-Pingother
+     * @param string $string string to convert
+     * @return string the result in "header" format
+     */
+    public static function headerize($string)
+    {
+        $headers = preg_split("/[\\s,]+/", $string, -1, PREG_SPLIT_NO_EMPTY);
+        $headers = array_map(function ($element) {
+            return str_replace(' ', '-', ucwords(strtolower(str_replace(['_', '-'], [' ', ' '], $element))));
+        }, $headers);
+        return implode(', ', $headers);
+    }
+
+    /**
      * @param string $url
      */
     public function redirect($url)
     {
-        header('Location: '.$url);
+        Response::setHeader("Location",$url);
         exit;
     }
 }

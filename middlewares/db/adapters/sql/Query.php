@@ -11,7 +11,7 @@
  * Made with love in Medellín
  */
 
-namespace cordillera\middlewares\db;
+namespace cordillera\middlewares\db\adapters\sql;
 
 class Query
 {
@@ -69,7 +69,7 @@ class Query
     public $params = [];
 
     /**
-     * Example: \modules\examples\routes\models\Route::findAll([
+     * Example: Route::findAll([
      *      'condition' => 'T.zone_id = :zone_id',
      *      'select' => 'T.id,T.`code`,T.`name`,T.zone_id',
      *      'params' => [':zone_id' => $zone->id]

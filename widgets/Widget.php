@@ -103,6 +103,8 @@ abstract class Widget implements Display
     /**
      * @param string $template
      *
+     * @throws Exception
+     *
      * @return string
      */
     protected function renderFile($template)
@@ -162,9 +164,12 @@ abstract class Widget implements Display
      */
     protected function renderContent()
     {
+        $return = '';
         if ($this->_renderer) {
-            return call_user_func_array($this->_renderer, [$this]);
+            $return = call_user_func_array($this->_renderer, [$this]);
         }
+
+        return $return;
     }
 
     /**

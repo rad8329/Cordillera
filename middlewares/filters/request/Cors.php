@@ -11,13 +11,13 @@
  * Made with love in Medellín
  */
 
-namespace cordillera\helpers;
+namespace cordillera\middlewares\filters\request;
 
-use cordillera\base\Application;
+use cordillera\base\interfaces\Filter;
 use cordillera\middlewares\Request;
 use cordillera\middlewares\Response;
 
-class Cors
+class Cors implements Filter
 {
     /**
      * @var array
@@ -31,15 +31,16 @@ class Cors
         'Access-Control-Expose-Headers' => [],
     ];
 
-    public function __construct($cors = [])
+    /**
+     * @param array $cors
+     */
+    public function __construct(array $cors = [])
     {
         $this->_cors = array_merge($this->_cors, $cors);
-        $this->init();
     }
 
-    protected function init()
+    public function execute()
     {
-
         $requestCorsHeaders = $this->extractHeaders();
         $responseCorsHeaders = $this->prepareHeaders($requestCorsHeaders);
         $this->addCorsHeaders($responseCorsHeaders);
@@ -50,15 +51,8 @@ class Cors
     }
 
     /**
-     * @param array $config
-     */
-    public static function setup(array $config = [])
-    {
-        $scope = new static($config);
-    }
-
-    /**
-     * Extract CORS headers from the request
+     * Extract CORS headers from the request.
+     *
      * @return array CORS headers to handle
      */
     public function extractHeaders()
@@ -72,11 +66,13 @@ class Cors
                 $headers[$headerField] = $headerData;
             }
         }
+
         return $headers;
     }
 
     /**
-     * Adds the CORS headers to the response
+     * Adds the CORS headers to the response.
+     *
      * @param array CORS headers which have been computed
      */
     public function addCorsHeaders($headers)
@@ -89,8 +85,10 @@ class Cors
     }
 
     /**
-     * For each CORS headers create the specific response
+     * For each CORS headers create the specific response.
+     *
      * @param array $requestHeaders CORS headers we have detected
+     *
      * @return array CORS headers ready to be sent
      */
     public function prepareHeaders($requestHeaders)
@@ -125,22 +123,23 @@ class Cors
     }
 
     /**
-     * Handle classic CORS request to avoid duplicate code
-     * @param string $type the kind of headers we would handle
-     * @param array $requestHeaders CORS headers request by client
-     * @param array $responseHeaders CORS response headers sent to the client
+     * Handle classic CORS request to avoid duplicate code.
+     *
+     * @param string $type            the kind of headers we would handle
+     * @param array  $requestHeaders  CORS headers request by client
+     * @param array  $responseHeaders CORS response headers sent to the client
      */
     protected function prepareAllowHeaders($type, $requestHeaders, &$responseHeaders)
     {
-        $requestHeaderField = 'Access-Control-Request-' . $type;
-        $responseHeaderField = 'Access-Control-Allow-' . $type;
+        $requestHeaderField = 'Access-Control-Request-'.$type;
+        $responseHeaderField = 'Access-Control-Allow-'.$type;
         if (!isset($requestHeaders[$requestHeaderField], $this->_cors[$requestHeaderField])) {
             return;
         }
         if (isset($this->_cors[$requestHeaderField]) && in_array('*', $this->_cors[$requestHeaderField])) {
             $responseHeaders[$responseHeaderField] = Request::headerize($requestHeaders[$requestHeaderField]);
         } else {
-            $requestedData = preg_split("/[\\s,]+/", $requestHeaders[$requestHeaderField], -1, PREG_SPLIT_NO_EMPTY);
+            $requestedData = preg_split('/[\\s,]+/', $requestHeaders[$requestHeaderField], -1, PREG_SPLIT_NO_EMPTY);
             $acceptedData = array_uintersect($requestedData, $this->_cors[$requestHeaderField], 'strcasecmp');
             if (!empty($acceptedData)) {
                 $responseHeaders[$responseHeaderField] = implode(', ', $acceptedData);

@@ -57,7 +57,7 @@ class Cordillera
 
             $object = $reflect->newInstanceArgs($config);
         } else {
-            Cordillera::$exception = new Exception(
+            self::$exception = new Exception(
                 Application::getLang()->translate('%s not found', [$classname]),
                 500,
                 Exception::ERROR

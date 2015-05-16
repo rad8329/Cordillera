@@ -28,7 +28,7 @@ class Exception extends \Exception implements ExceptionInterface
     const DBSTATEMENT = 7;
     const SQLPARAMS = 8;
     const ROUTING = 9;
-    const SQL = 10;
+    const QUERY = 10;
     const ERROR = 11;
     const FORBIDDEN = 12;
     const FILESYSTEM = 13;
@@ -46,7 +46,7 @@ class Exception extends \Exception implements ExceptionInterface
         self::BADARGUMENTS => 'ArgumentsException',
         self::DBSTATEMENT => 'DbStatementException',
         self::SQLPARAMS => 'SqlParamsException',
-        self::SQL => 'SqlException',
+        self::QUERY => 'QueryException',
         self::ROUTING => 'RoutingException',
         self::ERROR => 'ErrorException',
         self::FORBIDDEN => 'ForbiddenException',
@@ -94,7 +94,7 @@ class Exception extends \Exception implements ExceptionInterface
 
         if (CORDILLERA_DEBUG) {
             $html .= "<strong>{$this->getMessage()}</strong>";
-            $html .= "<div class=\"trace\">";
+            $html .= '<div class="trace">';
             $html .= implode("\n", array_map(function ($trace) {
                     return "<div>{$trace}</div>";
                 }, $this->getAllTraces())).'</div>';
@@ -103,7 +103,7 @@ class Exception extends \Exception implements ExceptionInterface
         }
 
         if (Application::getConfig()->get('exception.show_log_id') && Application::getLogger()->last_log_id) {
-            $html .= "<div class=\"clearfix log-info\"><div class=\"pull-right\">log_id: <strong>".Application::getLogger()->last_log_id.'</strong></div></div>';
+            $html .= '<div class="clearfix log-info"><div class="pull-right">log_id: <strong>'.Application::getLogger()->last_log_id.'</strong></div></div>';
         }
 
         return $html;

@@ -11,7 +11,7 @@
  * Made with love in Medellín
  */
 
-namespace cordillera\middlewares\db;
+namespace cordillera\middlewares\db\adapters\sql;
 
 class Expression
 {

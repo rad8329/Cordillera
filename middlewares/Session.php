@@ -265,7 +265,7 @@ class Session extends \SessionHandler
                 $session[$next] = [];
             }
 
-            $session = & $session[$next];
+            $session = &$session[$next];
         }
 
         $session[array_shift($parsed)] = $value;

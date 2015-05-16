@@ -11,11 +11,12 @@
  * Made with love in Medellín
  */
 
-namespace cordillera\middlewares\db;
+namespace cordillera\middlewares\db\adapters\sql;
 
 use cordillera\base\Application;
 use cordillera\middlewares\Exception;
-use cordillera\middlewares\Request;
+
+//use cordillera\middlewares\Request;
 
 class DataProvider
 {
@@ -70,7 +71,7 @@ class DataProvider
             throw new Exception(Application::getLang()->translate('{data_source} must be a Query|ActiveRecord objetc'), 500, Exception::BADARGUMENTS);
         } elseif (
             isset($config['data_source']) &&
-            (($config['data_source'] instanceof DataProvider) && ($config['data_source'] instanceof Query))
+            (($config['data_source'] instanceof self) && ($config['data_source'] instanceof Query))
         ) {
             throw new Exception(Application::getLang()->translate('{data_source} must be a Query|ActiveRecord objetc'), 500, Exception::BADARGUMENTS);
         }
@@ -82,13 +83,14 @@ class DataProvider
         }
 
         $this->extractRequest();
+        //@TODO: Filters logic
         //$this->setupFilters();
     }
 
     private function extractRequest()
     {
-        $this->_request_context = (new \ReflectionClass($this->_data_source))->getShortName();
-        $this->_request_params = Request::get($this->_request_context);
+        //$this->_request_context = (new \ReflectionClass($this->_data_source))->getShortName();
+        //$this->_request_params = Request::get($this->_request_context);
     }
 
     public function getData()

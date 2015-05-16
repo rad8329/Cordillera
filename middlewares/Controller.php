@@ -16,7 +16,7 @@ namespace cordillera\middlewares;
 use cordillera\base\Application;
 use cordillera\base\Cordillera;
 use cordillera\base\interfaces\Controller as ControllerIterface;
-use cordillera\helpers\Cors;
+use cordillera\middlewares\filters\request\Filter;
 
 class Controller implements ControllerIterface
 {
@@ -46,6 +46,11 @@ class Controller implements ControllerIterface
     public $type = 'html';
 
     /**
+     * @var Filter
+     */
+    public $filter;
+
+    /**
      * @var bool
      */
     public $rest = false;
@@ -55,6 +60,7 @@ class Controller implements ControllerIterface
      */
     public function __construct($handler)
     {
+        $this->filter = new Filter();
         $this->_handler = $handler;
         $this->_method = strtolower($_SERVER['REQUEST_METHOD']);
         $this->init();
@@ -86,7 +92,7 @@ class Controller implements ControllerIterface
 
     protected function run()
     {
-        $this->assertCsrfToken();
+        $this->filter->assertCsrfToken();
 
         if (!in_array($this->type, ['json', 'html'])) {
             throw new Exception(
@@ -97,6 +103,7 @@ class Controller implements ControllerIterface
 
         if (isset($this->_actions['filters']) && is_callable($this->_actions['filters'])) {
             $this->_actions['filters']($this);
+            $this->filter->execute();
         }
         if (isset($this->_actions[$this->_method]) && is_callable($this->_actions[$this->_method])) {
             $this->_actions[$this->_method]($this);
@@ -124,61 +131,12 @@ class Controller implements ControllerIterface
         ) {
             if ($response instanceof View) {
                 throw new Exception(
-                    Application::getLang()->translate("Response can not be a instance of cordillera\\middlewares\\View object"),
+                    Application::getLang()->translate('Response can not be a instance of cordillera\\middlewares\\View object'),
                     500,
                     Exception::BADARGUMENTS
                 );
             }
             Response::json($response);
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function assertJsonContentType()
-    {
-        if (
-            !isset($_SERVER['CONTENT_TYPE']) ||
-            (isset($_SERVER['CONTENT_TYPE']) && !preg_match('/^application\/json/', $_SERVER['CONTENT_TYPE']))
-        ) {
-            throw new Exception(Application::getLang()->translate('Bad request'), 400, Exception::BADREQUEST);
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function assertCsrfToken()
-    {
-        if (Application::getConfig()->get('request.csrf') && Request::isPost() && !$this->rest) {
-            // If the CSRF token is enabled, and is post method request
-            $request = Application::getRequest();
-            $payload = Request::payload(Application::getRequest()->csrf_id);
-            $post = Request::post(Application::getRequest()->csrf_id);
-
-            if (
-                // POST data
-                (empty($payload) && $post != $request->csrf_value) ||
-                // Payload data
-                (!empty($payload) && $payload != $request->csrf_value)
-            ) {
-                throw new Exception(Application::getLang()->translate('Bad request'), 400, Exception::BADREQUEST);
-            }
-        }
-    }
-
-    public function corsHeaders(){
-        Cors::setup();
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function assertAjax()
-    {
-        if (!Request::isAjax()) {
-            throw new Exception(Application::getLang()->translate('Bad request'), 400, Exception::BADREQUEST);
         }
     }
 

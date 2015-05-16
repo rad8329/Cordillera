@@ -54,9 +54,12 @@ class Column extends Widget
      */
     protected function renderFilter()
     {
+        $return = '';
         if (isset($this->_filter)) {
-            return $this->_filter->render();
+            $return = $this->_filter->render();
         }
+
+        return $return;
     }
 
     /**
@@ -74,19 +77,28 @@ class Column extends Widget
     }
 
     /**
+     * @param string $part
+     *
      * @return string
      */
     public function render($part = 'content')
     {
+        $return = '';
         switch ($part) {
             case 'content':
-                return $this->renderContent();
+                $return = $this->renderContent();
+                break;
             case 'filter':
-                return $this->renderFilter();
+                $return = $this->renderFilter();
+                break;
             case 'summary':
-                return $this->renderSummary();
+                $return = $this->renderSummary();
+                break;
             case 'header':
-                return $this->renderHeader();
+                $return = $this->renderHeader();
+                break;
         }
+
+        return $return;
     }
 }

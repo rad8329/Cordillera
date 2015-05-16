@@ -11,7 +11,7 @@
  * Made with love in Medellín
  */
 
-namespace cordillera\middlewares\db;
+namespace cordillera\middlewares\db\adapters\sql;
 
 class Sorter
 {
@@ -31,9 +31,9 @@ class Sorter
     public $order = '';
 
     /**
-     * @param $rquest_param
-     * @param $attribute
-     * @param string $order
+     * @param string        $request_param
+     * @param string        $attribute
+     * @param string string $order
      */
     public function __construct($request_param, $attribute, $order = 'ASC')
     {

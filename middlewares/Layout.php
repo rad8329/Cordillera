@@ -48,8 +48,8 @@ class Layout implements Display, LayoutInterface
      */
     public $assets = [
         'js' => [
-            Layout::HEAD_SCOPE => [],
-            Layout::END_SCOPE => [],
+            self::HEAD_SCOPE => [],
+            self::END_SCOPE => [],
         ],
         'css' => [],
     ];
@@ -117,13 +117,13 @@ class Layout implements Display, LayoutInterface
      * @param string $file  valid js file name
      * @param string $scope valid scope name
      */
-    public function registerJsFile($file, $scope = Layout::HEAD_SCOPE)
+    public function registerJsFile($file, $scope = self::HEAD_SCOPE)
     {
         $file_id = md5($file);
-        if ($scope == Layout::HEAD_SCOPE) {
-            unset($this->assets['js'][Layout::END_SCOPE][$file_id]);
+        if ($scope == self::HEAD_SCOPE) {
+            unset($this->assets['js'][self::END_SCOPE][$file_id]);
         } else {
-            unset($this->assets['js'][Layout::HEAD_SCOPE][$file_id]);
+            unset($this->assets['js'][self::HEAD_SCOPE][$file_id]);
         }
 
         $this->assets['js'][$scope][$file_id] = $file;
@@ -142,7 +142,7 @@ class Layout implements Display, LayoutInterface
      *
      * @return string Content (HTML) of js and css tags
      */
-    public function publishRegisteredFiles($scope = Layout::HEAD_SCOPE)
+    public function publishRegisteredFiles($scope = self::HEAD_SCOPE)
     {
         $tags = '';
 
@@ -152,7 +152,7 @@ class Layout implements Display, LayoutInterface
             }
         }
 
-        if ($scope == Layout::HEAD_SCOPE) {
+        if ($scope == self::HEAD_SCOPE) {
             foreach ($this->assets['css'] as $css) {
                 if ($css) {
                     $tags .= "\n<link rel=\"stylesheet\" type=\"text/css\" href=\"$css\">";

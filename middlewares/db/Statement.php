@@ -61,7 +61,7 @@ class Statement extends \PDOStatement
                     'error' => $e->getMessage(),
                 ]
             );
-            throw new Exception($e->getMessage(), 500, Exception::SQL);
+            throw new Exception($e->getMessage(), 500, Exception::QUERY);
         }
     }
 }

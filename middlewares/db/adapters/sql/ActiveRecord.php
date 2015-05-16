@@ -11,9 +11,10 @@
  * Made with love in Medellín
  */
 
-namespace cordillera\middlewares\db;
+namespace cordillera\middlewares\db\adapters\sql;
 
 use cordillera\base\traits\Form;
+use cordillera\middlewares\db\Connection;
 use cordillera\middlewares\Exception;
 use cordillera\base\Application;
 

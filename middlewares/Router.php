@@ -300,7 +300,7 @@ class Router implements RouterInterface
                 500,
                 Exception::ERROR
             );
-            $controller = "cordillera\\middlewares\\Controller";
+            $controller = 'cordillera\\middlewares\\Controller';
         }
 
         $handler = '';

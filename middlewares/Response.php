@@ -27,18 +27,18 @@ class Response
     }
 
     /**
-     * @param string $header
+     * @param string      $header
      * @param null|string $value
-     * @param bool $replace
-     * @param null|int $http_response_code
+     * @param bool        $replace
+     * @param null|int    $http_response_code
      */
     public static function setHeader($header, $value = null, $replace = true, $http_response_code = null)
     {
-        header("$header" . ($value ? ": $value" : ""), $replace, $http_response_code);
+        header("$header".($value ? ": $value" : ''), $replace, $http_response_code);
     }
 
     /**
-     * @param int $statusCode HTTP status code
+     * @param int  $statusCode HTTP status code
      * @param bool $exit
      */
     public static function headerStatus($statusCode, $exit = false)
@@ -101,8 +101,8 @@ class Response
         }
 
         if (isset($status_codes[$statusCode])) {
-            $status_string = $statusCode . ' ' . $status_codes[$statusCode];
-            self::setHeader($_SERVER['SERVER_PROTOCOL'] . ' ' . $status_string, null, true, $statusCode);
+            $status_string = $statusCode.' '.$status_codes[$statusCode];
+            self::setHeader($_SERVER['SERVER_PROTOCOL'].' '.$status_string, null, true, $statusCode);
         }
 
         if ($exit) {

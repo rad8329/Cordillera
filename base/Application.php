@@ -24,81 +24,75 @@ use cordillera\middlewares\Router;
 use cordillera\middlewares\Session;
 use cordillera\base\interfaces\Application as ApplicationInterface;
 
+/**
+ * @property Config $config
+ * @property Controller $controller
+ * @property Connection $db
+ * @property Auth $auth
+ * @property Lang $lang
+ * @property Logger $logger
+ * @property Request $request
+ * @property Router $router
+ * @property Session $session
+ */
 class Application implements ApplicationInterface
 {
     /**
-     * @return Connection
+     * @var Request
      */
-    public static function getDb()
-    {
-        return Cordillera::get('db');
-    }
+    protected $request;
 
     /**
-     * @return Request
+     * @var Connection
      */
-    public static function getRequest()
-    {
-        return Cordillera::get('request');
-    }
+    protected $db;
 
     /**
-     * @return Logger
+     * @var Logger
      */
-    public static function getLogger()
-    {
-        return Cordillera::get('logger');
-    }
+    protected $logger;
 
     /**
-     * @return Auth
+     * @var Auth
      */
-    public static function getAuth()
-    {
-        return Cordillera::get('auth');
-    }
+    protected $auth;
 
     /**
-     * @return Session
+     * @var Session
      */
-    public static function getSession()
-    {
-        return Cordillera::get('session');
-    }
+    protected $session;
 
     /**
-     * @return Router
+     * @var Router
      */
-    public static function getRouter()
-    {
-        return Cordillera::get('router');
-    }
+    protected $router;
 
     /**
-     * @return Lang
+     * @var Lang
      */
-    public static function getLang()
-    {
-        return Cordillera::get('lang');
-    }
+    protected $lang;
 
     /**
-     * @return Config
+     * @var Config
      */
-    public static function getConfig()
-    {
-        return Cordillera::get('config');
-    }
+    protected $config;
 
     /**
-     * @return Controller
+     * @var Controller
      */
-    public static function getController()
+    protected $controller;
+
+    /**
+     * @param string $component
+     *
+     * @return mixed
+     */
+    public function __get($component)
     {
-        return Cordillera::get('controller');
+        return Cordillera::$instance->{$component};
     }
 
-    public static function halt()
+    public function halt()
     {
         Cordillera::$instance->destroy('db');
     }

@@ -13,62 +13,7 @@
 
 namespace cordillera\base\interfaces;
 
-use cordillera\middlewares\Auth;
-use cordillera\middlewares\Config;
-use cordillera\middlewares\Controller;
-use cordillera\middlewares\db\Connection;
-use cordillera\middlewares\Lang;
-use cordillera\middlewares\Logger;
-use cordillera\middlewares\Request;
-use cordillera\middlewares\Router;
-use cordillera\middlewares\Session;
-
 interface Application
 {
-    /**
-     * @return Connection
-     */
-    public static function getDb();
-
-    /**
-     * @return Request
-     */
-    public static function getRequest();
-
-    /**
-     * @return Auth
-     */
-    public static function getAuth();
-
-    /**
-     * @return Session
-     */
-    public static function getSession();
-
-    /**
-     * @return Router
-     */
-    public static function getRouter();
-
-    /**
-     * @return Lang
-     */
-    public static function getLang();
-
-    /**
-     * @return Logger
-     */
-    public static function getLogger();
-
-    /**
-     * @return Config
-     */
-    public static function getConfig();
-
-    /**
-     * @return Controller
-     */
-    public static function getController();
-
-    public static function halt();
+    public function halt();
 }

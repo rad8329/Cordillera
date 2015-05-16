@@ -13,7 +13,7 @@
 
 namespace cordillera\middlewares;
 
-use cordillera\base\Application;
+use cordillera\base\Cordillera;
 use cordillera\base\interfaces\Display;
 use cordillera\base\interfaces\Layout as LayoutInterface;
 
@@ -100,7 +100,7 @@ class Layout implements Display, LayoutInterface
             require_once $cordillera_layout_file;
         } else {
             throw new Exception(
-                Application::getLang()->translate('The layout %s not found', [$this->_template]),
+                Cordillera::app()->lang->translate('The layout %s not found', [$this->_template]),
                 500,
                 Exception::LAYOUT
             );

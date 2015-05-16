@@ -18,6 +18,11 @@ use cordillera\middlewares\Exception;
 class Cordillera
 {
     /**
+     * @var Application
+     */
+    private static $app;
+
+    /**
      * @var string
      */
     public static $exception;
@@ -31,16 +36,6 @@ class Cordillera
      * @var array
      */
     public static $definitions = [];
-
-    /**
-     * @param $conatiner
-     *
-     * @return mixed|null
-     */
-    public static function get($conatiner)
-    {
-        return static::$instance->{$conatiner};
-    }
 
     /**
      * @param string $classname
@@ -58,7 +53,7 @@ class Cordillera
             $object = $reflect->newInstanceArgs($config);
         } else {
             self::$exception = new Exception(
-                Application::getLang()->translate('%s not found', [$classname]),
+                self::app()->lang->translate('%s not found', [$classname]),
                 500,
                 Exception::ERROR
             );
@@ -71,5 +66,17 @@ class Cordillera
         }
 
         return $object;
+    }
+
+    /**
+     * @return Application
+     */
+    public static function app()
+    {
+        if (!self::$app) {
+            self::$app = new Application();
+        }
+
+        return self::$app;
     }
 }

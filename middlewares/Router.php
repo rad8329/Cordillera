@@ -13,7 +13,6 @@
 
 namespace cordillera\middlewares;
 
-use cordillera\base\Application;
 use cordillera\base\Cordillera;
 use cordillera\base\interfaces\Router as RouterInterface;
 
@@ -134,7 +133,7 @@ class Router implements RouterInterface
 
         if ($handler) {
             if (isset($this->_handlers[$handler])) {
-                throw new Exception(Application::getLang()->translate('Can not redeclare route %s', [$handler]), 500, Exception::ROUTING);
+                throw new Exception(Cordillera::app()->lang->translate('Can not redeclare route %s', [$handler]), 500, Exception::ROUTING);
             } else {
                 $this->_handlers[$handler] = $route;
             }
@@ -296,7 +295,7 @@ class Router implements RouterInterface
             $controller = $this->_controller_classname;
         } else {
             Cordillera::$exception = new Exception(
-                Application::getLang()->translate('%s not found', [$this->_controller_classname]),
+                Cordillera::app()->lang->translate('%s not found', [$this->_controller_classname]),
                 500,
                 Exception::ERROR
             );

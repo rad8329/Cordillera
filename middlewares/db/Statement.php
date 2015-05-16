@@ -13,7 +13,7 @@
 
 namespace cordillera\middlewares\db;
 
-use cordillera\base\Application;
+use cordillera\base\Cordillera;
 use cordillera\middlewares\Exception;
 
 class Statement extends \PDOStatement
@@ -48,14 +48,14 @@ class Statement extends \PDOStatement
                 throw new \PDOException($error[2]);
             }
 
-            Application::getLogger()->debug('Execute statement', [
+            Cordillera::app()->logger->debug('Execute statement', [
                 'statement' => $this->pdo->_last_statement,
                 'input_parameters' => $input_parameters,
             ]);
 
             return $return;
         } catch (\PDOException $e) {
-            Application::getLogger()->error('Execute statement failed', [
+            Cordillera::app()->logger->error('Execute statement failed', [
                     'statement' => $this->pdo->_last_statement,
                     'input_parameters' => $input_parameters,
                     'error' => $e->getMessage(),

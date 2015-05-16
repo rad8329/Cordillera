@@ -13,7 +13,6 @@
 
 namespace cordillera\middlewares;
 
-use cordillera\base\Application;
 use cordillera\base\Cordillera;
 use cordillera\base\interfaces\Controller as ControllerIterface;
 use cordillera\middlewares\filters\request\Filter;
@@ -83,7 +82,7 @@ class Controller implements ControllerIterface
             $this->run();
         } else {
             throw new Exception(
-                Application::getLang()->translate('The command %s not found', [$this->_handler]),
+                Cordillera::app()->lang->translate('The command %s not found', [$this->_handler]),
                 404,
                 Exception::NOTFOUND
             );
@@ -96,7 +95,7 @@ class Controller implements ControllerIterface
 
         if (!in_array($this->type, ['json', 'html'])) {
             throw new Exception(
-                Application::getLang()->translate('The response type must be json or html'),
+                Cordillera::app()->lang->translate('The response type must be json or html'),
                 500, Exception::VIEW
             );
         }
@@ -108,7 +107,7 @@ class Controller implements ControllerIterface
         if (isset($this->_actions[$this->_method]) && is_callable($this->_actions[$this->_method])) {
             $this->_actions[$this->_method]($this);
         } else {
-            throw new Exception(Application::getLang()->translate('HTTP verb is forbidden'), 403, Exception::FORBIDDEN);
+            throw new Exception(Cordillera::app()->lang->translate('HTTP verb is forbidden'), 403, Exception::FORBIDDEN);
         }
     }
 
@@ -131,7 +130,7 @@ class Controller implements ControllerIterface
         ) {
             if ($response instanceof View) {
                 throw new Exception(
-                    Application::getLang()->translate('Response can not be a instance of cordillera\\middlewares\\View object'),
+                    Cordillera::app()->lang->translate('Response can not be a instance of cordillera\\middlewares\\View object'),
                     500,
                     Exception::BADARGUMENTS
                 );

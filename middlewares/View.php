@@ -13,7 +13,7 @@
 
 namespace cordillera\middlewares;
 
-use cordillera\base\Application;
+use cordillera\base\Cordillera;
 use cordillera\base\interfaces\Display;
 
 class View implements Display
@@ -72,7 +72,7 @@ class View implements Display
             require_once $cordillera_template_file;
         } else {
             throw new Exception(
-                Application::getLang()->translate('The view %s not found', [$this->_template]),
+                Cordillera::app()->lang->translate('The view %s not found', [$this->_template]),
                 500,
                 Exception::VIEW
             );
@@ -82,7 +82,7 @@ class View implements Display
 
         ob_end_clean();
 
-        if ($this->layout && !Request::isAjax() && !Application::getController()->rest && Application::getController()->type != 'json') {
+        if ($this->layout && !Request::isAjax() && !Cordillera::app()->controller->rest && Cordillera::app()->controller->type != 'json') {
             $this->_output = $this->layout->render($this->_output);
         }
 

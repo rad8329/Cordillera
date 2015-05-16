@@ -13,7 +13,7 @@
 
 namespace cordillera\middlewares;
 
-use cordillera\base\Application;
+use cordillera\base\Cordillera;
 
 class Response
 {
@@ -136,15 +136,15 @@ class Response
      */
     public static function exception(Exception $exception)
     {
-        if (Request::isAjax() || (Application::getController()->type == 'json' || Application::getController()->rest)) {
+        if (Request::isAjax() || (Cordillera::app()->controller->type == 'json' || Cordillera::app()->controller->rest)) {
             $response = ['error' => true, 'message' => $exception->getMessage()];
 
             if (CORDILLERA_DEBUG) {
                 $response['trace'] = $exception->getAllTraces();
             }
 
-            if (Application::getConfig()->get('exception.show_log_id') && Application::getLogger()->last_log_id) {
-                $response['log_id'] = Application::getLogger()->last_log_id;
+            if (Cordillera::app()->config->get('exception.show_log_id') && Cordillera::app()->logger->last_log_id) {
+                $response['log_id'] = Cordillera::app()->logger->last_log_id;
             }
 
             self::json($response);

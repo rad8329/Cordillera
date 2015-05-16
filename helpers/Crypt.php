@@ -13,7 +13,7 @@
 
 namespace cordillera\helpers;
 
-use cordillera\base\Application;
+use cordillera\base\Cordillera;
 
 class Crypt
 {
@@ -24,7 +24,7 @@ class Crypt
      */
     public static function hash($text)
     {
-        return md5($text.Application::getRequest()->salt);
+        return md5($text.Cordillera::app()->request->salt);
     }
 
     /**
@@ -44,7 +44,7 @@ class Crypt
      */
     public static function requestVar($name)
     {
-        if (Application::getConfig()->get('request.csrf')) {
+        if (Cordillera::app()->config->get('request.csrf')) {
             $name = self::hash($name);
         }
 

@@ -16,7 +16,7 @@ namespace cordillera\middlewares\db\adapters\sql;
 use cordillera\base\traits\Form;
 use cordillera\middlewares\db\Connection;
 use cordillera\middlewares\Exception;
-use cordillera\base\Application;
+use cordillera\base\Cordillera;
 
 abstract class ActiveRecord
 {
@@ -67,7 +67,7 @@ abstract class ActiveRecord
      */
     public function getDb()
     {
-        return Application::getDb();
+        return Cordillera::app()->db;
     }
 
     /**
@@ -178,7 +178,7 @@ abstract class ActiveRecord
                     'limit' => 1,
                 ]);
         } else {
-            throw new Exception(Application::getLang()->translate('Bad arguments'), 500, Exception::BADARGUMENTS);
+            throw new Exception(Cordillera::app()->lang->translate('Bad arguments'), 500, Exception::BADARGUMENTS);
         }
 
         $stmt = $model->getDb()->prepare($query->toSql());
@@ -219,7 +219,7 @@ abstract class ActiveRecord
                     'from' => $model->getTableName().' T',
                 ]);
         } else {
-            throw new Exception(Application::getLang()->translate('Bad arguments'), 500, Exception::BADARGUMENTS);
+            throw new Exception(Cordillera::app()->lang->translate('Bad arguments'), 500, Exception::BADARGUMENTS);
         }
 
         $stmt = $model->getDb()->prepare($query->toSql());
@@ -268,7 +268,7 @@ abstract class ActiveRecord
                     'select' => 'COUNT(*)',
                 ]);
         } else {
-            throw new Exception(Application::getLang()->translate('Bad arguments'), 500, Exception::BADARGUMENTS);
+            throw new Exception(Cordillera::app()->lang->translate('Bad arguments'), 500, Exception::BADARGUMENTS);
         }
 
         $stmt = $model->getDb()->prepare($query->toSql());

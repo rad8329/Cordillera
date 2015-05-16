@@ -32,7 +32,7 @@ class  Bootstrap
      */
     public function __destruct()
     {
-        Application::halt();
+        Cordillera::app()->halt();
     }
 
     /**
@@ -56,55 +56,55 @@ class  Bootstrap
 
         Cordillera::$instance->share('session', function () use ($classmap, $classmap_source) {
             return Cordillera::factory($classmap['session'], [
-                Application::getConfig()->get('session.key'),
-                Application::getConfig()->get('session.path'),
-                Application::getConfig()->get('session.lifetime'),
-                Application::getConfig()->get('session.cookie'),
+                Cordillera::app()->config->get('session.key'),
+                Cordillera::app()->config->get('session.path'),
+                Cordillera::app()->config->get('session.lifetime'),
+                Cordillera::app()->config->get('session.cookie'),
             ], $classmap_source['session']);
         });
 
         Cordillera::$instance->share('logger', function () use ($classmap, $classmap_source) {
             return Cordillera::factory($classmap['logger'], [
-                Application::getConfig()->get('logger', []),
+                Cordillera::app()->config->get('logger', []),
             ], $classmap_source['logger']);
         });
 
         Cordillera::$instance->share('request', function () use ($classmap, $classmap_source) {
             return Cordillera::factory($classmap['request'], [
-                Application::getSession(),
-                Application::getConfig()->get('request.csrf', false),
+                Cordillera::app()->session,
+                Cordillera::app()->config->get('request.csrf', false),
             ], $classmap_source['request']);
         });
 
         Cordillera::$instance->share('db', function () use ($classmap, $classmap_source) {
             return Cordillera::factory($classmap['db'], [
-                Application::getConfig()->get('db.dsn'),
-                Application::getConfig()->get('db.username'),
-                Application::getConfig()->get('db.password'),
-                Application::getConfig()->get('db.options', []),
+                Cordillera::app()->config->get('db.dsn'),
+                Cordillera::app()->config->get('db.username'),
+                Cordillera::app()->config->get('db.password'),
+                Cordillera::app()->config->get('db.options', []),
             ], $classmap_source['db']);
         });
 
         Cordillera::$instance->share('router', function () use ($classmap, $classmap_source) {
             return Cordillera::factory($classmap['router'], [
-                Application::getRequest()->base_url,
-                Application::getRequest()->script_name,
-                Application::getConfig()->get('response.default'),
+                Cordillera::app()->request->base_url,
+                Cordillera::app()->request->script_name,
+                Cordillera::app()->config->get('response.default'),
                 $classmap['controller'],
-                Application::getConfig()->get('router.rules'),
-                Application::getConfig()->get('router.show_index_file'),
-                Application::getConfig()->get('router.match_types', []),
+                Cordillera::app()->config->get('router.rules'),
+                Cordillera::app()->config->get('router.show_index_file'),
+                Cordillera::app()->config->get('router.match_types', []),
             ], $classmap_source['router']);
         });
 
         Cordillera::$instance->share('auth', function () use ($classmap, $classmap_source) {
             return Cordillera::factory($classmap['auth'],
-                [Application::getSession()], $classmap_source['auth']);
+                [Cordillera::app()->session], $classmap_source['auth']);
         });
 
         Cordillera::$instance->share('lang', function () use ($classmap, $classmap_source) {
             return Cordillera::factory($classmap['lang'],
-                [Application::getConfig()->get('language', 'en')],
+                [Cordillera::app()->config->get('language', 'en')],
                 $classmap_source['lang']);
         });
     }
@@ -116,7 +116,7 @@ class  Bootstrap
     {
         try {
             ob_start();
-            Application::getRouter()->dispatch();
+            Cordillera::app()->router->dispatch();
             $output = ob_get_contents();
             ob_end_clean();
 
@@ -131,6 +131,6 @@ class  Bootstrap
             Response::exception($e);
         }
 
-        Application::getSession()->clean('flash');
+        Cordillera::app()->session->clean('flash');
     }
 }

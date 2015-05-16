@@ -13,7 +13,7 @@
 
 namespace cordillera\widgets;
 
-use cordillera\base\Application;
+use cordillera\base\Cordillera;
 use cordillera\middlewares\db\adapters\sql\DataProvider;
 use cordillera\middlewares\Exception;
 use cordillera\widgets\grid\Column;
@@ -39,9 +39,9 @@ class Grid extends Widget
     {
         parent::setup($config);
         if (!isset($config['data_provider'])) {
-            throw new Exception(Application::getLang()->translate('{data_provider} must be a DatapPovider objetc'), 500, Exception::BADARGUMENTS);
+            throw new Exception(Cordillera::app()->lang->translate('{data_provider} must be a DatapPovider objetc'), 500, Exception::BADARGUMENTS);
         } elseif (isset($config['data_provider']) && !($config['data_provider'] instanceof DataProvider)) {
-            throw new Exception(Application::getLang()->translate('{data_provider} must be a DatapPovider objetc'), 500, Exception::BADARGUMENTS);
+            throw new Exception(Cordillera::app()->lang->translate('{data_provider} must be a DatapPovider objetc'), 500, Exception::BADARGUMENTS);
         }
     }
 

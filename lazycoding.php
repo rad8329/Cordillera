@@ -44,5 +44,5 @@ function dumpx($args)
  */
 function translate($text, $params = [], $source = 'app')
 {
-    return \cordillera\base\Application::getLang()->translate($text, $params, $source);
+    return \cordillera\base\Cordillera::app()->lang->translate($text, $params, $source);
 }

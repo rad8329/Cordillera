@@ -133,7 +133,7 @@ class Router implements RouterInterface
 
         if ($handler) {
             if (isset($this->_handlers[$handler])) {
-                throw new Exception(Cordillera::app()->lang->translate('Can not redeclare route %s', [$handler]), 500, Exception::ROUTING);
+                throw new Exception(translate('Can not redeclare route %s', [$handler]), 500, Exception::ROUTING);
             } else {
                 $this->_handlers[$handler] = $route;
             }
@@ -295,7 +295,7 @@ class Router implements RouterInterface
             $controller = $this->_controller_classname;
         } else {
             Cordillera::$exception = new Exception(
-                Cordillera::app()->lang->translate('%s not found', [$this->_controller_classname]),
+                translate('%s not found', [$this->_controller_classname]),
                 500,
                 Exception::ERROR
             );
@@ -313,7 +313,7 @@ class Router implements RouterInterface
             $handler = ($match != '/' && $match != '') ? $match : $this->_default_route;
         }
 
-        return new $controller($handler);
+        return new $controller($handler, app()->request, app()->response);
     }
 
     /**

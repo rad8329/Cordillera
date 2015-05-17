@@ -13,6 +13,7 @@
 
 namespace cordillera\middlewares;
 
+use cordillera\base\Application;
 use cordillera\base\Cordillera;
 use cordillera\base\interfaces\Controller as ControllerIterface;
 use cordillera\middlewares\filters\request\Filter;
@@ -45,6 +46,11 @@ class Controller implements ControllerIterface
     public $response_type = 'html';
 
     /**
+     * @var Application
+     */
+    public $app;
+
+    /**
      * @var Filter
      */
     public $filter;
@@ -55,10 +61,24 @@ class Controller implements ControllerIterface
     public $is_rest = false;
 
     /**
-     * @param string $handler
+     * @var Request
      */
-    public function __construct($handler)
+    public $request;
+
+    /**
+     * @var Response
+     */
+    public $response;
+
+    /**
+     * @param Request  $request
+     * @param Response $response
+     * @param string   $handler
+     */
+    public function __construct($handler, Request $request, Response $response)
     {
+        $this->request = $request;
+        $this->response = $response;
         $this->filter = new Filter();
         $this->_handler = $handler;
         $this->_method = strtolower($_SERVER['REQUEST_METHOD']);
@@ -82,7 +102,7 @@ class Controller implements ControllerIterface
             $this->run();
         } else {
             throw new Exception(
-                Cordillera::app()->lang->translate('The command %s not found', [$this->_handler]),
+                translate('The command %s not found', [$this->_handler]),
                 404,
                 Exception::NOTFOUND
             );
@@ -95,7 +115,7 @@ class Controller implements ControllerIterface
 
         if (!in_array($this->response_type, ['json', 'html'])) {
             throw new Exception(
-                Cordillera::app()->lang->translate('The response type must be json or html'),
+                translate('The response type must be json or html'),
                 500, Exception::VIEW
             );
         }
@@ -107,7 +127,7 @@ class Controller implements ControllerIterface
         if (isset($this->_actions[$this->_method]) && is_callable($this->_actions[$this->_method])) {
             $this->_actions[$this->_method]($this);
         } else {
-            throw new Exception(Cordillera::app()->lang->translate('HTTP verb is forbidden'), 403, Exception::FORBIDDEN);
+            throw new Exception(translate('HTTP verb is forbidden'), 403, Exception::FORBIDDEN);
         }
     }
 
@@ -119,24 +139,33 @@ class Controller implements ControllerIterface
     public function setResponse($response)
     {
         if (!$this->is_rest) {
-            Cordillera::app()->response->setSecurityHeaders();
+            $this->response->setSecurityHeaders();
         }
 
         if ($response instanceof View && $this->response_type == 'html' && !$this->is_rest) {
-            Cordillera::app()->response->raw($response->render());
+            $this->response->raw($response->render());
         } elseif (
             ($this->is_rest || $this->response_type == 'json' || is_array($response)) ||
             (is_object($response) && !($response instanceof View))
         ) {
             if ($response instanceof View) {
                 throw new Exception(
-                    Cordillera::app()->lang->translate('Response can not be a instance of cordillera\\middlewares\\View object'),
+                    translate('Response can not be a instance of cordillera\\middlewares\\View object'),
                     500,
                     Exception::BADARGUMENTS
                 );
             }
-            Cordillera::app()->response->json($response);
+            $this->response->json($response);
         }
+    }
+
+    /**
+     * @param string $url
+     */
+    public function redirect($url)
+    {
+        $this->response->setHeader('Location', $url);
+        exit;
     }
 
     /**

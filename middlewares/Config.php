@@ -29,7 +29,7 @@ class Config
     }
 
     /**
-     * Example: Cordillera::app()->config->get("response.default");.
+     * Example: app()->config->get("response.default");.
      *
      * @param string $config  A string separate by point
      * @param null   $default

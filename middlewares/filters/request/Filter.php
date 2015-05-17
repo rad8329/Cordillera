@@ -13,7 +13,6 @@
 
 namespace cordillera\middlewares\filters\request;
 
-use cordillera\base\Cordillera;
 use cordillera\base\interfaces\Filter as FilterInterface;
 use cordillera\middlewares\Exception;
 
@@ -33,7 +32,7 @@ class Filter implements FilterInterface
             !isset($_SERVER['CONTENT_TYPE']) ||
             (isset($_SERVER['CONTENT_TYPE']) && !preg_match('/^application\/json/', $_SERVER['CONTENT_TYPE']))
         ) {
-            throw new Exception(Cordillera::app()->lang->translate('Bad request'), 400, Exception::BADREQUEST);
+            throw new Exception(translate('Bad request'), 400, Exception::BADREQUEST);
         }
     }
 
@@ -42,11 +41,11 @@ class Filter implements FilterInterface
      */
     public function assertCsrfToken()
     {
-        if (Cordillera::app()->config->get('request.csrf') && Cordillera::app()->request->isPost() && !Cordillera::app()->controller->is_rest) {
+        if (app()->config->get('request.csrf') && app()->request->isPost() && !app()->controller->is_rest) {
             // If the CSRF token is enabled, and is post method request
-            $request = Cordillera::app()->request;
-            $payload = Cordillera::app()->request->payload(Cordillera::app()->request->csrf_id);
-            $post = Cordillera::app()->request->post(Cordillera::app()->request->csrf_id);
+            $request = app()->request;
+            $payload = app()->request->payload(app()->request->csrf_id);
+            $post = app()->request->post(app()->request->csrf_id);
 
             if (
                 // POST data
@@ -54,7 +53,7 @@ class Filter implements FilterInterface
                 // Payload data
                 (!empty($payload) && $payload != $request->csrf_value)
             ) {
-                throw new Exception(Cordillera::app()->lang->translate('Bad request'), 400, Exception::BADREQUEST);
+                throw new Exception(translate('Bad request'), 400, Exception::BADREQUEST);
             }
         }
     }
@@ -64,8 +63,8 @@ class Filter implements FilterInterface
      */
     public function assertAjax()
     {
-        if (!Cordillera::app()->request->isAjax()) {
-            throw new Exception(Cordillera::app()->lang->translate('Bad request'), 400, Exception::BADREQUEST);
+        if (!app()->request->isAjax()) {
+            throw new Exception(translate('Bad request'), 400, Exception::BADREQUEST);
         }
     }
 

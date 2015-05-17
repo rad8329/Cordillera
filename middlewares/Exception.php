@@ -13,7 +13,6 @@
 
 namespace cordillera\middlewares;
 
-use cordillera\base\Cordillera;
 use cordillera\base\interfaces\Exception as ExceptionInterface;
 
 class Exception extends \Exception implements ExceptionInterface
@@ -62,7 +61,7 @@ class Exception extends \Exception implements ExceptionInterface
     public function __construct($message = '', $status_code = 500, $code = -1, $previous = null)
     {
         parent::__construct($message, $code, $previous);
-        Cordillera::app()->response->headerStatus($status_code, false);
+        app()->response->headerStatus($status_code, false);
     }
 
     /**
@@ -102,8 +101,8 @@ class Exception extends \Exception implements ExceptionInterface
             $html = $this->getMessage();
         }
 
-        if (Cordillera::app()->config->get('exception.show_log_id') && Cordillera::app()->logger->last_log_id) {
-            $html .= '<div class="clearfix log-info"><div class="pull-right">log_id: <strong>'.Cordillera::app()->logger->last_log_id.'</strong></div></div>';
+        if (app()->config->get('exception.show_log_id') && app()->logger->last_log_id) {
+            $html .= '<div class="clearfix log-info"><div class="pull-right">log_id: <strong>'.app()->logger->last_log_id.'</strong></div></div>';
         }
 
         return $html;

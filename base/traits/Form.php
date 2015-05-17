@@ -83,9 +83,9 @@ trait Form
     public function field($name)
     {
         if (property_exists($this, $name)) {
-            return Crypt::requestVar((new \ReflectionClass($this))->getShortName()).'['.Crypt::requestVar($name).']';
+            return Crypt::request((new \ReflectionClass($this))->getShortName()).'['.Crypt::request($name).']';
         }
 
-        return Crypt::requestVar($name);
+        return Crypt::request($name);
     }
 }

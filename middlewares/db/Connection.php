@@ -13,7 +13,6 @@
 
 namespace cordillera\middlewares\db;
 
-use cordillera\base\Cordillera;
 use cordillera\middlewares\Exception;
 use PDO;
 
@@ -78,7 +77,7 @@ class Connection extends PDO
             parent::__construct($dsn, $username, $password, $options);
             $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, ['\cordillera\middlewares\db\Statement', [$this]]);
         } catch (\PDOException $e) {
-            Cordillera::app()->logger->critical('DB connection failed', [
+            logger()->critical('DB connection failed', [
                     'dsn' => $dsn,
                     'username' => $username,
                     'password' => $password,

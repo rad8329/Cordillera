@@ -13,7 +13,6 @@
 
 namespace cordillera\middlewares\db\adapters\sql;
 
-use cordillera\base\Cordillera;
 use cordillera\middlewares\Exception;
 
 class DataProvider
@@ -66,12 +65,12 @@ class DataProvider
         unset($config['request_params'], $config['request_context']);
 
         if (!isset($config['data_source'])) {
-            throw new Exception(Cordillera::app()->lang->translate('{data_source} must be a Query|ActiveRecord objetc'), 500, Exception::BADARGUMENTS);
+            throw new Exception(translate('{data_source} must be a Query|ActiveRecord objetc'), 500, Exception::BADARGUMENTS);
         } elseif (
             isset($config['data_source']) &&
             (($config['data_source'] instanceof self) && ($config['data_source'] instanceof Query))
         ) {
-            throw new Exception(Cordillera::app()->lang->translate('{data_source} must be a Query|ActiveRecord objetc'), 500, Exception::BADARGUMENTS);
+            throw new Exception(translate('{data_source} must be a Query|ActiveRecord objetc'), 500, Exception::BADARGUMENTS);
         }
 
         foreach ($config as $property => $data) {
@@ -88,7 +87,7 @@ class DataProvider
     private function extractRequest()
     {
         //$this->_request_context = (new \ReflectionClass($this->_data_source))->getShortName();
-        //$this->_request_params = Cordillera::app()->request->get($this->_request_context);
+        //$this->_request_params = app()->request->get($this->_request_context);
     }
 
     public function getData()

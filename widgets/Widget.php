@@ -13,7 +13,6 @@
 
 namespace cordillera\widgets;
 
-use cordillera\base\Cordillera;
 use cordillera\base\interfaces\Display;
 use cordillera\middlewares\Exception;
 use cordillera\middlewares\Layout;
@@ -66,19 +65,19 @@ abstract class Widget implements Display
     protected function setup(array $config = [])
     {
         if (isset($config['renderer']) && (!($config['renderer'] instanceof \Closure) && !is_callable($config['renderer']))) {
-            throw new Exception(Cordillera::app()->lang->translate('{renderer} must be callable'), 500, Exception::BADARGUMENTS);
+            throw new Exception(translate('{renderer} must be callable'), 500, Exception::BADARGUMENTS);
         }
 
         if (isset($config['layout']) && !($config['layout'] instanceof Layout)) {
-            throw new Exception(Cordillera::app()->lang->translate('{layout} must be instace of Layout objetc'), 500, Exception::BADARGUMENTS);
+            throw new Exception(translate('{layout} must be instace of Layout objetc'), 500, Exception::BADARGUMENTS);
         }
 
         if (isset($config['template']) && !is_string($config['template'])) {
-            throw new Exception(Cordillera::app()->lang->translate('{template} must be a string'), 500, Exception::BADARGUMENTS);
+            throw new Exception(translate('{template} must be a string'), 500, Exception::BADARGUMENTS);
         }
 
         if (isset($config['html_options']) && !is_array($config['html_options'])) {
-            throw new Exception(Cordillera::app()->lang->translate('{html_options} must be an array'), 500, Exception::BADARGUMENTS);
+            throw new Exception(translate('{html_options} must be an array'), 500, Exception::BADARGUMENTS);
         }
 
         foreach ($config as $property => $data) {
@@ -120,7 +119,7 @@ abstract class Widget implements Display
             include $cordillera_template_file;
         } else {
             throw new Exception(
-                Cordillera::app()->lang->translate('The widget view %s not found', [$this->_template]),
+                translate('The widget view %s not found', [$this->_template]),
                 500,
                 Exception::VIEW
             );

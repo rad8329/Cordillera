@@ -13,7 +13,6 @@
 
 namespace cordillera\middlewares;
 
-use cordillera\base\Cordillera;
 use cordillera\helpers\Crypt;
 
 class Request
@@ -192,7 +191,7 @@ class Request
 
         while ($parsed) {
             $next = array_shift($parsed);
-            $next_crypted = Crypt::requestVar($next);
+            $next_crypted = Crypt::request($next);
 
             if (isset($result[$next])) {
                 $result = $result[$next];
@@ -231,7 +230,7 @@ class Request
 
         while ($parsed) {
             $next = array_shift($parsed);
-            $next_crypted = Crypt::requestVar($next);
+            $next_crypted = Crypt::request($next);
 
             if (isset($result[$next])) {
                 $result = $result[$next];
@@ -276,14 +275,5 @@ class Request
         }, $headers);
 
         return implode(', ', $headers);
-    }
-
-    /**
-     * @param string $url
-     */
-    public function redirect($url)
-    {
-        Cordillera::app()->response->setHeader('Location', $url);
-        exit;
     }
 }

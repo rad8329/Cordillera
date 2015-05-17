@@ -13,8 +13,6 @@
 
 namespace cordillera\helpers;
 
-use cordillera\base\Cordillera;
-
 class Url
 {
     /**
@@ -25,7 +23,10 @@ class Url
      */
     public static function relative($handler, $params = [])
     {
-        return substr(Cordillera::app()->request->base_url, 0, -1).Cordillera::app()->router->generate($handler, $params);
+        return substr(
+            app()->request->base_url, 0, -1).
+            app()->router->generate($handler, $params
+        );
     }
 
     /**
@@ -36,6 +37,9 @@ class Url
      */
     public static function absolute($handler, $params = [])
     {
-        return substr(Cordillera::app()->request->base_url, 0, -1).Cordillera::app()->router->generate($handler, $params);
+        return substr(
+            app()->request->base_url, 0, -1).
+            app()->router->generate($handler, $params
+        );
     }
 }

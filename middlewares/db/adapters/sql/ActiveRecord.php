@@ -16,7 +16,6 @@ namespace cordillera\middlewares\db\adapters\sql;
 use cordillera\base\traits\Form;
 use cordillera\middlewares\db\Connection;
 use cordillera\middlewares\Exception;
-use cordillera\base\Cordillera;
 
 abstract class ActiveRecord
 {
@@ -65,9 +64,9 @@ abstract class ActiveRecord
     /**
      * @return Connection
      */
-    public function getDb()
+    public function getDB()
     {
-        return Cordillera::app()->db;
+        return app()->db;
     }
 
     /**
@@ -178,10 +177,10 @@ abstract class ActiveRecord
                     'limit' => 1,
                 ]);
         } else {
-            throw new Exception(Cordillera::app()->lang->translate('Bad arguments'), 500, Exception::BADARGUMENTS);
+            throw new Exception(translate('Bad arguments'), 500, Exception::BADARGUMENTS);
         }
 
-        $stmt = $model->getDb()->prepare($query->toSql());
+        $stmt = $model->getDB()->prepare($query->toSql());
         $stmt->execute($query->params);
         $record = $stmt->fetchObject(get_class($model), [false]);
         $stmt->closeCursor();
@@ -219,10 +218,10 @@ abstract class ActiveRecord
                     'from' => $model->getTableName().' T',
                 ]);
         } else {
-            throw new Exception(Cordillera::app()->lang->translate('Bad arguments'), 500, Exception::BADARGUMENTS);
+            throw new Exception(translate('Bad arguments'), 500, Exception::BADARGUMENTS);
         }
 
-        $stmt = $model->getDb()->prepare($query->toSql());
+        $stmt = $model->getDB()->prepare($query->toSql());
         $stmt->execute($query->params);
         $records = [];
 
@@ -268,10 +267,10 @@ abstract class ActiveRecord
                     'select' => 'COUNT(*)',
                 ]);
         } else {
-            throw new Exception(Cordillera::app()->lang->translate('Bad arguments'), 500, Exception::BADARGUMENTS);
+            throw new Exception(translate('Bad arguments'), 500, Exception::BADARGUMENTS);
         }
 
-        $stmt = $model->getDb()->prepare($query->toSql());
+        $stmt = $model->getDB()->prepare($query->toSql());
         $stmt->execute($query->params);
         $records = $stmt->fetchColumn();
 
@@ -347,7 +346,7 @@ abstract class ActiveRecord
 
             $sql .= " WHERE {$pk_condition}";
 
-            $stmt = $this->getDb()->prepare($sql);
+            $stmt = $this->getDB()->prepare($sql);
             $stmt->execute($params);
 
             $this->setDirty(false);
@@ -379,9 +378,9 @@ abstract class ActiveRecord
 
             $sql .= implode(',', $data);
 
-            $stmt = $this->getDb()->prepare($sql);
+            $stmt = $this->getDB()->prepare($sql);
             $stmt->execute($params);
-            $last_insert_id = $this->getDb()->lastInsertId();
+            $last_insert_id = $this->getDB()->lastInsertId();
 
             if (is_array($pk_name)) {
                 /*
@@ -420,7 +419,7 @@ abstract class ActiveRecord
 
         $sql .= " WHERE {$pk_condition}";
 
-        $stmt = $this->getDb()->prepare($sql);
+        $stmt = $this->getDB()->prepare($sql);
         $stmt->execute($params);
 
         $stmt->closeCursor();

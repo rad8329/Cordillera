@@ -13,8 +13,6 @@
 
 namespace cordillera\middlewares;
 
-use cordillera\base\Cordillera;
-
 class Response
 {
     public function setSecurityHeaders()
@@ -129,37 +127,5 @@ class Response
         }
 
         echo $content;
-    }
-
-    /**
-     * @param Exception $exception
-     */
-    public function exception(Exception $exception)
-    {
-        if (Cordillera::app()->request->isAjax() || (Cordillera::app()->controller->response_type == 'json' || Cordillera::app()->controller->is_rest)) {
-            $response = ['error' => true, 'message' => $exception->getMessage()];
-
-            if (CORDILLERA_DEBUG) {
-                $response['trace'] = $exception->getAllTraces();
-            }
-
-            if (Cordillera::app()->config->get('exception.show_log_id') && Cordillera::app()->logger->last_log_id) {
-                $response['log_id'] = Cordillera::app()->logger->last_log_id;
-            }
-
-            $this->json($response);
-        } else {
-            $layout = new Layout('error');
-
-            if (CORDILLERA_DEBUG) {
-                $layout->properties['title'] = Exception::$types[$exception->getCode()];
-            }
-            if (ob_get_length()) {
-                ob_end_clean();
-            }
-
-            echo $layout->render($exception->toHtml());
-        }
-        exit;
     }
 }

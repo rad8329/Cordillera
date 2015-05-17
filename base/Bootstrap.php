@@ -15,7 +15,6 @@ namespace cordillera\base;
 
 use cordillera\middlewares\Config;
 use cordillera\middlewares\Exception;
-use cordillera\middlewares\Response;
 
 class  Bootstrap
 {
@@ -42,10 +41,10 @@ class  Bootstrap
     {
         Cordillera::$instance = new DI();
 
-        $classmap = $classmap_source = require CORDILLERA_DIR.'classmap.php';
+        $classmap = $classmap_source = require CORDILLERA_DIR . 'classmap.php';
 
-        if (is_file(CORDILLERA_APP_DIR.'config'.DS.'classmap.php')) {
-            $classmap = array_merge($classmap, (array) require CORDILLERA_APP_DIR.'config'.DS.'classmap.php');
+        if (is_file(CORDILLERA_APP_DIR . 'config' . DS . 'classmap.php')) {
+            $classmap = array_merge($classmap, (array)require CORDILLERA_APP_DIR . 'config' . DS . 'classmap.php');
         }
 
         // Lazy loading
@@ -107,6 +106,10 @@ class  Bootstrap
                 [Cordillera::app()->config->get('language', 'en')],
                 $classmap_source['lang']);
         });
+
+        Cordillera::$instance->share('response', function () use ($classmap, $classmap_source) {
+            return Cordillera::factory($classmap['response'], [], $classmap_source['response']);
+        });
     }
 
     /**
@@ -126,9 +129,9 @@ class  Bootstrap
                 throw new Cordillera::$exception();
             }
         } catch (\ErrorException $e) {
-            Response::exception(new Exception($e->getMessage(), 500, Exception::ERROR, $e));
+            Cordillera::app()->response->exception(new Exception($e->getMessage(), 500, Exception::ERROR, $e));
         } catch (Exception $e) {
-            Response::exception($e);
+            Cordillera::app()->response->exception($e);
         }
 
         Cordillera::app()->session->clean('flash');

@@ -20,6 +20,7 @@ use cordillera\middlewares\Auth;
 use cordillera\middlewares\Lang;
 use cordillera\middlewares\Logger;
 use cordillera\middlewares\Request;
+use cordillera\middlewares\Response;
 use cordillera\middlewares\Router;
 use cordillera\middlewares\Session;
 use cordillera\base\interfaces\Application as ApplicationInterface;
@@ -32,6 +33,7 @@ use cordillera\base\interfaces\Application as ApplicationInterface;
  * @property Lang $lang
  * @property Logger $logger
  * @property Request $request
+ * @property Response $response
  * @property Router $router
  * @property Session $session
  */
@@ -41,6 +43,11 @@ class Application implements ApplicationInterface
      * @var Request
      */
     protected $request;
+
+    /**
+     * @var Response
+     */
+    protected $response;
 
     /**
      * @var Connection

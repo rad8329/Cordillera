@@ -16,8 +16,6 @@ namespace cordillera\middlewares\db\adapters\sql;
 use cordillera\base\Cordillera;
 use cordillera\middlewares\Exception;
 
-//use cordillera\middlewares\Request;
-
 class DataProvider
 {
     /**
@@ -90,7 +88,7 @@ class DataProvider
     private function extractRequest()
     {
         //$this->_request_context = (new \ReflectionClass($this->_data_source))->getShortName();
-        //$this->_request_params = Request::get($this->_request_context);
+        //$this->_request_params = Cordillera::app()->request->get($this->_request_context);
     }
 
     public function getData()

@@ -20,7 +20,7 @@ class Cordillera
     /**
      * @var Application
      */
-    private static $app;
+    private static $_app;
 
     /**
      * @var string
@@ -73,10 +73,10 @@ class Cordillera
      */
     public static function app()
     {
-        if (!self::$app) {
-            self::$app = new Application();
+        if (!self::$_app) {
+            self::$_app = new Application();
         }
 
-        return self::$app;
+        return self::$_app;
     }
 }

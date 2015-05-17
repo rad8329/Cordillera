@@ -42,7 +42,7 @@ class Controller implements ControllerIterface
     /**
      * @var string html|json
      */
-    public $type = 'html';
+    public $response_type = 'html';
 
     /**
      * @var Filter
@@ -52,7 +52,7 @@ class Controller implements ControllerIterface
     /**
      * @var bool
      */
-    public $rest = false;
+    public $is_rest = false;
 
     /**
      * @param string $handler
@@ -93,7 +93,7 @@ class Controller implements ControllerIterface
     {
         $this->filter->assertCsrfToken();
 
-        if (!in_array($this->type, ['json', 'html'])) {
+        if (!in_array($this->response_type, ['json', 'html'])) {
             throw new Exception(
                 Cordillera::app()->lang->translate('The response type must be json or html'),
                 500, Exception::VIEW
@@ -118,14 +118,14 @@ class Controller implements ControllerIterface
      */
     public function setResponse($response)
     {
-        if (!$this->rest) {
-            Response::setSecurityHeaders();
+        if (!$this->is_rest) {
+            Cordillera::app()->response->setSecurityHeaders();
         }
 
-        if ($response instanceof View && $this->type == 'html' && !$this->rest) {
-            Response::raw($response->render());
+        if ($response instanceof View && $this->response_type == 'html' && !$this->is_rest) {
+            Cordillera::app()->response->raw($response->render());
         } elseif (
-            ($this->rest || $this->type == 'json' || is_array($response)) ||
+            ($this->is_rest || $this->response_type == 'json' || is_array($response)) ||
             (is_object($response) && !($response instanceof View))
         ) {
             if ($response instanceof View) {
@@ -135,7 +135,7 @@ class Controller implements ControllerIterface
                     Exception::BADARGUMENTS
                 );
             }
-            Response::json($response);
+            Cordillera::app()->response->json($response);
         }
     }
 

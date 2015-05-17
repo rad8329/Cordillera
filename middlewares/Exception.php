@@ -62,7 +62,7 @@ class Exception extends \Exception implements ExceptionInterface
     public function __construct($message = '', $status_code = 500, $code = -1, $previous = null)
     {
         parent::__construct($message, $code, $previous);
-        Response::headerStatus($status_code, false);
+        Cordillera::app()->response->headerStatus($status_code, false);
     }
 
     /**

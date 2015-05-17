@@ -18,7 +18,7 @@ function dump($args)
 {
     $print = print_r($args, 1);
 
-    if (\cordillera\middlewares\Request::isAjax()) {
+    if (\cordillera\base\Cordillera::app()->request->isAjax()) {
         echo $print;
     } else {
         $print = str_replace(['<', '>'], ['&lt;', '&gt;'], $print);

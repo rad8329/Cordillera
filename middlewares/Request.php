@@ -13,6 +13,7 @@
 
 namespace cordillera\middlewares;
 
+use cordillera\base\Cordillera;
 use cordillera\helpers\Crypt;
 
 class Request
@@ -140,7 +141,7 @@ class Request
     /**
      * @return bool
      */
-    public static function isPost()
+    public function isPost()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             return true;
@@ -152,7 +153,7 @@ class Request
     /**
      * @return bool
      */
-    public static function isOptions()
+    public function isOptions()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
             return true;
@@ -164,7 +165,7 @@ class Request
     /**
      * @return bool
      */
-    public static function isAjax()
+    public function isAjax()
     {
         if (!(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'))) {
             return false;
@@ -179,7 +180,7 @@ class Request
      *
      * @return mixed
      */
-    public static function payload($name, $default = null)
+    public function payload($name, $default = null)
     {
         if (!static::$payload) {
             static::$payload = json_decode(file_get_contents('php://input'), true);
@@ -211,7 +212,7 @@ class Request
      *
      * @return mixed
      */
-    public static function get($name, $default = null)
+    public function get($name, $default = null)
     {
         return isset($_GET[$name]) ? $_GET[$name] : $default;
     }
@@ -222,7 +223,7 @@ class Request
      *
      * @return mixed
      */
-    public static function post($name, $default = null)
+    public function post($name, $default = null)
     {
         $parsed = explode('.', $name);
 
@@ -253,7 +254,7 @@ class Request
      *
      * @return string the result in "php $_SERVER header" format
      */
-    public static function headerizeToPhp($string)
+    public function headerizeToPhp($string)
     {
         return 'HTTP_'.strtoupper(str_replace([' ', '-'], ['_', '_'], $string));
     }
@@ -267,7 +268,7 @@ class Request
      *
      * @return string the result in "header" format
      */
-    public static function headerize($string)
+    public function headerize($string)
     {
         $headers = preg_split('/[\\s,]+/', $string, -1, PREG_SPLIT_NO_EMPTY);
         $headers = array_map(function ($element) {
@@ -282,7 +283,7 @@ class Request
      */
     public function redirect($url)
     {
-        Response::setHeader('Location', $url);
+        Cordillera::app()->response->setHeader('Location', $url);
         exit;
     }
 }

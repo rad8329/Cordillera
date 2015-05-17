@@ -13,6 +13,7 @@
 
 return [
     'request' => 'cordillera\\middlewares\\Request',
+    'response' => 'cordillera\\middlewares\\Response',
     'session' => 'cordillera\\middlewares\\Session',
     'router' => 'cordillera\\middlewares\\Router',
     'auth' => 'cordillera\\middlewares\\Auth',

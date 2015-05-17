@@ -17,13 +17,13 @@ use cordillera\base\Cordillera;
 
 class Response
 {
-    public static function setSecurityHeaders()
+    public function setSecurityHeaders()
     {
-        self::setHeader('x-content-type-options', 'nosniff');
-        self::setHeader('x-frame-options', 'sameorigin');
-        self::setHeader('x-permitted-cross-domain-policies', 'master-only');
-        self::setHeader('x-xss-protection', '1; mode=block');
-        self::setHeader('X-Powered-By', 'PHP');
+        $this->setHeader('x-content-type-options', 'nosniff');
+        $this->setHeader('x-frame-options', 'sameorigin');
+        $this->setHeader('x-permitted-cross-domain-policies', 'master-only');
+        $this->setHeader('x-xss-protection', '1; mode=block');
+        $this->setHeader('X-Powered-By', 'PHP');
     }
 
     /**
@@ -32,7 +32,7 @@ class Response
      * @param bool        $replace
      * @param null|int    $http_response_code
      */
-    public static function setHeader($header, $value = null, $replace = true, $http_response_code = null)
+    public function setHeader($header, $value = null, $replace = true, $http_response_code = null)
     {
         header("$header".($value ? ": $value" : ''), $replace, $http_response_code);
     }
@@ -41,7 +41,7 @@ class Response
      * @param int  $statusCode HTTP status code
      * @param bool $exit
      */
-    public static function headerStatus($statusCode, $exit = false)
+    public function headerStatus($statusCode, $exit = false)
     {
         static $status_codes = null;
 
@@ -102,7 +102,7 @@ class Response
 
         if (isset($status_codes[$statusCode])) {
             $status_string = $statusCode.' '.$status_codes[$statusCode];
-            self::setHeader($_SERVER['SERVER_PROTOCOL'].' '.$status_string, null, true, $statusCode);
+            $this->setHeader($_SERVER['SERVER_PROTOCOL'].' '.$status_string, null, true, $statusCode);
         }
 
         if ($exit) {
@@ -113,19 +113,19 @@ class Response
     /**
      * @param mixed $content
      */
-    public static function json($content)
+    public function json($content)
     {
-        self::setHeader('Content-Type', 'application/json');
+        $this->setHeader('Content-Type', 'application/json');
         echo json_encode($content, JSON_PRETTY_PRINT);
     }
 
     /**
      * @param string $content
      */
-    public static function raw($content)
+    public function raw($content)
     {
         if (isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
-            self::setHeader('X-UA-Compatible', 'IE=edge,chrome=1');
+            $this->setHeader('X-UA-Compatible', 'IE=edge,chrome=1');
         }
 
         echo $content;
@@ -134,9 +134,9 @@ class Response
     /**
      * @param Exception $exception
      */
-    public static function exception(Exception $exception)
+    public function exception(Exception $exception)
     {
-        if (Request::isAjax() || (Cordillera::app()->controller->type == 'json' || Cordillera::app()->controller->rest)) {
+        if (Cordillera::app()->request->isAjax() || (Cordillera::app()->controller->response_type == 'json' || Cordillera::app()->controller->is_rest)) {
             $response = ['error' => true, 'message' => $exception->getMessage()];
 
             if (CORDILLERA_DEBUG) {
@@ -147,7 +147,7 @@ class Response
                 $response['log_id'] = Cordillera::app()->logger->last_log_id;
             }
 
-            self::json($response);
+            $this->json($response);
         } else {
             $layout = new Layout('error');
 

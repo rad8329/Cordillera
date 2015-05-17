@@ -13,9 +13,8 @@
 
 namespace cordillera\middlewares\filters\request;
 
+use cordillera\base\Cordillera;
 use cordillera\base\interfaces\Filter;
-use cordillera\middlewares\Request;
-use cordillera\middlewares\Response;
 
 class Cors implements Filter
 {
@@ -60,7 +59,7 @@ class Cors implements Filter
         $headers = [];
         $requestHeaders = array_keys($this->_cors);
         foreach ($requestHeaders as $headerField) {
-            $serverField = Request::headerizeToPhp($headerField);
+            $serverField = Cordillera::app()->request->headerizeToPhp($headerField);
             $headerData = isset($_SERVER[$serverField]) ? $_SERVER[$serverField] : null;
             if ($headerData !== null) {
                 $headers[$headerField] = $headerData;
@@ -79,7 +78,7 @@ class Cors implements Filter
     {
         if (empty($headers) === false) {
             foreach ($headers as $header => $value) {
-                Response::setHeader($header, $value);
+                Cordillera::app()->response->setHeader($header, $value);
             }
         }
     }
@@ -111,7 +110,7 @@ class Cors implements Filter
             $responseHeaders['Access-Control-Allow-Credentials'] = $this->_cors['Access-Control-Allow-Credentials'] ? 'true' : 'false';
         }
 
-        if (isset($this->_cors['Access-Control-Max-Age']) && Request::isOptions()) {
+        if (isset($this->_cors['Access-Control-Max-Age']) && Cordillera::app()->request->isOptions()) {
             $responseHeaders['Access-Control-Max-Age'] = $this->_cors['Access-Control-Max-Age'];
         }
 
@@ -137,7 +136,7 @@ class Cors implements Filter
             return;
         }
         if (isset($this->_cors[$requestHeaderField]) && in_array('*', $this->_cors[$requestHeaderField])) {
-            $responseHeaders[$responseHeaderField] = Request::headerize($requestHeaders[$requestHeaderField]);
+            $responseHeaders[$responseHeaderField] = Cordillera::app()->request->headerize($requestHeaders[$requestHeaderField]);
         } else {
             $requestedData = preg_split('/[\\s,]+/', $requestHeaders[$requestHeaderField], -1, PREG_SPLIT_NO_EMPTY);
             $acceptedData = array_uintersect($requestedData, $this->_cors[$requestHeaderField], 'strcasecmp');

@@ -82,7 +82,7 @@ class View implements Display
 
         ob_end_clean();
 
-        if ($this->layout && !Request::isAjax() && !Cordillera::app()->controller->rest && Cordillera::app()->controller->type != 'json') {
+        if ($this->layout && !Cordillera::app()->request->isAjax() && !Cordillera::app()->controller->is_rest && Cordillera::app()->controller->response_type != 'json') {
             $this->_output = $this->layout->render($this->_output);
         }
 

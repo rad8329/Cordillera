@@ -21,12 +21,9 @@ class Url
      *
      * @return string
      */
-    public static function relative($handler, $params = [])
+    public static function relative($handler, array $params = [])
     {
-        return substr(
-            app()->request->base_url, 0, -1).
-            app()->router->generate($handler, $params
-        );
+        return substr(app()->request->base_url, 0, -1).app()->router->generate($handler, $params);
     }
 
     /**
@@ -35,11 +32,8 @@ class Url
      *
      * @return string
      */
-    public static function absolute($handler, $params = [])
+    public static function absolute($handler, array $params = [])
     {
-        return substr(
-            app()->request->base_url, 0, -1).
-            app()->router->generate($handler, $params
-        );
+        return substr(app()->request->base_url, 0, -1).app()->router->generate($handler, $params);
     }
 }

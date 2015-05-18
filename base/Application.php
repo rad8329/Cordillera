@@ -117,7 +117,9 @@ class Application implements ApplicationInterface
         $this->logger = Cordillera::$instance->{'logger'};
         $this->response = Cordillera::$instance->{'response'};
 
-        if ($this->request->isAjax() || ($this->controller->response_type == 'json' || $this->controller->is_rest)) {
+        if ($this->request->isAjax() ||
+            (isset($this->controller) && ($this->controller->response_type == 'json' || $this->controller->is_rest))
+        ) {
             $response = ['error' => true, 'message' => $exception->getMessage()];
 
             if (CORDILLERA_DEBUG) {

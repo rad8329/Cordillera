@@ -95,22 +95,22 @@ class Logger extends AbstractLogger
     public $last_log_id = '';
 
     /**
-     * @param array $options
+     * @param array $config
      *
      * @throws Exception
      */
-    public function __construct(array $options = [])
+    public function __construct(array $config = [])
     {
         $_this = $this;
-        if (!isset($options['level'])) {
-            $options['level'] = CORDILLERA_DEBUG ? LogLevel::DEBUG : LogLevel::WARNING;
+        if (!isset($config['level'])) {
+            $config['level'] = CORDILLERA_DEBUG ? LogLevel::DEBUG : LogLevel::WARNING;
         }
 
-        if (!isset($options['path'])) {
-            $options['path'] = CORDILLERA_APP_DIR.'logs';
+        if (!isset($config['path'])) {
+            $config['path'] = CORDILLERA_APP_DIR.'logs';
         }
 
-        foreach ($options as $option => $value) {
+        foreach ($config as $option => $value) {
             if (property_exists(get_class($this), '_'.$option)) {
                 $_this->{'_'.$option} = $value;
             } else {

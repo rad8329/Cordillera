@@ -138,11 +138,19 @@ class Request
     }
 
     /**
+     * @return string
+     */
+    public function getMethod()
+    {
+        return $_SERVER['REQUEST_METHOD'];
+    }
+
+    /**
      * @return bool
      */
     public function isPost()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($this->getMethod() == 'POST') {
             return true;
         }
 
@@ -154,7 +162,7 @@ class Request
      */
     public function isOptions()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+        if ($this->getMethod() == 'OPTIONS') {
             return true;
         }
 

@@ -49,6 +49,11 @@ class Router implements RouterInterface
     protected $_controller_classname;
 
     /**
+     * @var string
+     */
+    public $handler;
+
+    /**
      * @var array
      */
     protected $_match_types = [
@@ -94,9 +99,6 @@ class Router implements RouterInterface
 
     protected function init(array $rules)
     {
-        /*
-         * @TODO: Allow to add multiples routes to the same controller action
-         */
         $this->add($rules);
     }
 
@@ -132,11 +134,7 @@ class Router implements RouterInterface
         $this->_routes[] = [$route, $handler];
 
         if ($handler) {
-            if (isset($this->_handlers[$handler])) {
-                throw new Exception(translate('Can not redeclare route %s', [$handler]), 500, Exception::ROUTING);
-            } else {
-                $this->_handlers[$handler] = $route;
-            }
+            $this->_handlers[$handler][] = $route;
         }
     }
 
@@ -145,41 +143,51 @@ class Router implements RouterInterface
      *
      * Generate the URL for a named route. Replace regexes with supplied parameters
      *
-     * @param string $route The name of the route.
+     * @param string $handler The name of the handler.
      * @param array @params Associative array of parameters to replace placeholders with.
      *
      * @return string The URL of the route with named parameters in place.
      */
-    public function generate($route, array $params = [])
+    public function generate($handler, array $params = [])
     {
-        if (!isset($this->_handlers[$route])) {
-            $url = $this->_show_index_file ? '/'.$this->_script_name.'/'.$route : '/'.$route;
+        if (!isset($this->_handlers[$handler])) {
+            $url = $this->_show_index_file ? '/'.$this->_script_name.'/'.$handler : '/'.$handler;
 
             return $url.(!empty($params) ? '?'.http_build_query($params, '&') : '');
         }
 
-        $route = $this->_handlers[$route];
-        //prepare url
-        $url = $this->_show_index_file ? '/'.$this->_script_name.$route : $route;
+        foreach ($this->_handlers[$handler] as $route) {
+            $scope_params = $params;
+            if (preg_match_all('`(/|\.|)\[([^:\]]*+)(?::([^:\]]*+))?\](\?|)`', $route, $matches, PREG_SET_ORDER)) {
+                if (count($scope_params) >= count($matches)) {
+                    $url = $this->_show_index_file ? '/'.$this->_script_name.$route : $route;
+                    foreach ($matches as $match) {
+                        list($block, $pre, $type, $param, $optional) = $match;
+                        unset($type);
 
-        if (preg_match_all('`(/|\.|)\[([^:\]]*+)(?::([^:\]]*+))?\](\?|)`', $route, $matches, PREG_SET_ORDER)) {
-            foreach ($matches as $match) {
-                list($block, $pre, $type, $param, $optional) = $match;
-                unset($type);
+                        if ($pre) {
+                            $block = substr($block, 1);
+                        }
+                        if (isset($scope_params[$param])) {
+                            $url = str_replace($block, $scope_params[$param], $url);
+                            unset($scope_params[$param]);
+                        } elseif ($optional) {
+                            $url = str_replace($pre.$block, '', $url);
+                        } else {
+                            $url = str_replace($pre.$block, '', $url);
+                        }
+                    }
 
-                if ($pre) {
-                    $block = substr($block, 1);
+                    $url = $url.(!empty($scope_params) ? '?'.http_build_query($scope_params, '&') : '');
                 }
-                if (isset($params[$param])) {
-                    $url = str_replace($block, $params[$param], $url);
-                    unset($params[$param]);
-                } elseif ($optional) {
-                    $url = str_replace($pre.$block, '', $url);
-                } else {
-                    $url = str_replace($pre.$block, '', $url);
-                }
+            } elseif (!isset($url)) {
+                $url = $this->_show_index_file ? '/'.$this->_script_name.$route : $route;
             }
-            $url = $url.(!empty($params) ? '?'.http_build_query($params, '&') : '');
+        }
+
+        if (!isset($url)) {
+            $url = $this->_show_index_file ? '/'.$this->_script_name.'/'.$handler : $handler;
+            $url .= (!empty($params) ? '?'.http_build_query($params, '&') : '');
         }
 
         return $url;
@@ -302,18 +310,18 @@ class Router implements RouterInterface
             $controller = 'cordillera\\middlewares\\Controller';
         }
 
-        $handler = '';
+        $this->handler = '';
 
         if (isset($match['friendly']) && !$match['friendly']) {
-            $handler = $match['handler'] ? $match['handler'] : $this->_default_route;
+            $this->handler = $match['handler'] ? $match['handler'] : $this->_default_route;
         } elseif (isset($match['friendly']) && $match['friendly']) {
-            $handler = $match['handler'];
+            $this->handler = $match['handler'];
             $_GET = array_merge($_GET, $match['params']);
         } elseif (!isset($match['friendly'])) {
-            $handler = ($match != '/' && $match != '') ? $match : $this->_default_route;
+            $this->handler = ($match != '/' && $match != '') ? $match : $this->_default_route;
         }
 
-        return new $controller($handler, app()->request, app()->response);
+        return new $controller($this);
     }
 
     /**

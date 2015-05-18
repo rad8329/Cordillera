@@ -13,7 +13,6 @@
 
 namespace cordillera\middlewares;
 
-use cordillera\base\Application;
 use cordillera\base\Cordillera;
 use cordillera\base\interfaces\Controller as ControllerIterface;
 use cordillera\middlewares\filters\request\Filter;
@@ -36,19 +35,9 @@ class Controller implements ControllerIterface
     protected $_filename;
 
     /**
-     * @var string
-     */
-    protected $_handler;
-
-    /**
      * @var string html|json
      */
     public $response_type = 'html';
-
-    /**
-     * @var Application
-     */
-    public $app;
 
     /**
      * @var Filter
@@ -61,6 +50,11 @@ class Controller implements ControllerIterface
     public $is_rest = false;
 
     /**
+     * @var Router
+     */
+    public $router;
+
+    /**
      * @var Request
      */
     public $request;
@@ -71,24 +65,22 @@ class Controller implements ControllerIterface
     public $response;
 
     /**
-     * @param Request  $request
-     * @param Response $response
-     * @param string   $handler
+     * @param Router $router
      */
-    public function __construct($handler, Request $request, Response $response)
+    public function __construct(Router $router)
     {
-        $this->request = $request;
-        $this->response = $response;
+        $this->router = $router;
+        $this->request = app()->request;
+        $this->response = app()->response;
         $this->filter = new Filter();
-        $this->_handler = $handler;
-        $this->_method = strtolower($_SERVER['REQUEST_METHOD']);
+        $this->_method = strtolower($this->request->getMethod());
         $this->init();
     }
 
     protected function init()
     {
-        $filename_app = CORDILLERA_APP_DIR.'modules'.DS.$this->_handler.'.action.php';
-        $filename_cordillera = CORDILLERA_DIR.'modules'.DS.$this->_handler.'.action.php';
+        $filename_app = CORDILLERA_APP_DIR.'modules'.DS.$this->router->handler.'.action.php';
+        $filename_cordillera = CORDILLERA_DIR.'modules'.DS.$this->router->handler.'.action.php';
 
         $this->_filename = is_file($filename_app) ?
             $filename_app : (is_file($filename_cordillera) ? $filename_cordillera : '');
@@ -102,7 +94,7 @@ class Controller implements ControllerIterface
             $this->run();
         } else {
             throw new Exception(
-                translate('The command %s not found', [$this->_handler]),
+                translate('The command %s not found', [$this->router->handler]),
                 404,
                 Exception::NOTFOUND
             );

@@ -131,10 +131,10 @@ class Router implements RouterInterface
      */
     public function map($route, $handler)
     {
-        $this->_routes[] = [$route, $handler];
+        $this->_routes[] = ['/'.$route, $handler];
 
         if ($handler) {
-            $this->_handlers[$handler][] = $route;
+            $this->_handlers[$handler][] = '/'.$route;
         }
     }
 
@@ -186,8 +186,8 @@ class Router implements RouterInterface
         }
 
         if (!isset($url)) {
-            $url = $this->_show_index_file ? '/'.$this->_script_name.'/'.$handler : $handler;
-            $url .= (!empty($params) ? '?'.http_build_query($params, '&') : '');
+            $url = $this->_show_index_file ? '/'.$this->_script_name.'/'.$handler : '/'.$handler.
+            (!empty($params) ? '?'.http_build_query($params, '&') : '');
         }
 
         return $url;

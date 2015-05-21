@@ -14,9 +14,12 @@
 namespace cordillera\middlewares\filters\request;
 
 use cordillera\base\interfaces\Filter;
+use cordillera\base\traits\Request;
 
 class Cors implements Filter
 {
+    use Request;
+
     /**
      * @var array
      */
@@ -58,7 +61,7 @@ class Cors implements Filter
         $headers = [];
         $requestHeaders = array_keys($this->_cors);
         foreach ($requestHeaders as $headerField) {
-            $serverField = app()->request->headerizeToPhp($headerField);
+            $serverField = $this->headerizeToPhp($headerField);
             $headerData = isset($_SERVER[$serverField]) ? $_SERVER[$serverField] : null;
             if ($headerData !== null) {
                 $headers[$headerField] = $headerData;
@@ -109,7 +112,7 @@ class Cors implements Filter
             $responseHeaders['Access-Control-Allow-Credentials'] = $this->_cors['Access-Control-Allow-Credentials'] ? 'true' : 'false';
         }
 
-        if (isset($this->_cors['Access-Control-Max-Age']) && app()->request->isOptions()) {
+        if (isset($this->_cors['Access-Control-Max-Age']) && $this->isOptions()) {
             $responseHeaders['Access-Control-Max-Age'] = $this->_cors['Access-Control-Max-Age'];
         }
 
@@ -135,7 +138,7 @@ class Cors implements Filter
             return;
         }
         if (isset($this->_cors[$requestHeaderField]) && in_array('*', $this->_cors[$requestHeaderField])) {
-            $responseHeaders[$responseHeaderField] = app()->request->headerize($requestHeaders[$requestHeaderField]);
+            $responseHeaders[$responseHeaderField] = $this->headerize($requestHeaders[$requestHeaderField]);
         } else {
             $requestedData = preg_split('/[\\s,]+/', $requestHeaders[$requestHeaderField], -1, PREG_SPLIT_NO_EMPTY);
             $acceptedData = array_uintersect($requestedData, $this->_cors[$requestHeaderField], 'strcasecmp');

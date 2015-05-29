@@ -16,8 +16,9 @@ namespace cordillera\middlewares\db\adapters\sql;
 use cordillera\base\traits\Form;
 use cordillera\middlewares\db\Connection;
 use cordillera\middlewares\Exception;
+use cordillera\base\interfaces\ActiveRecord as ActiveRecordInterface;
 
-abstract class ActiveRecord
+abstract class ActiveRecord implements ActiveRecordInterface
 {
     use Form;
 
@@ -146,7 +147,7 @@ abstract class ActiveRecord
     /**
      * @param Query|array|bool $args
      *
-     * @return array
+     * @return \stdClass
      *
      * @throws Exception
      */
@@ -162,18 +163,18 @@ abstract class ActiveRecord
             $query->limit = 1;
 
             if (empty($query->from)) {
-                $query->addFrom($model->getTableName().' T');
+                $query->addFrom($model->getTableName() . ' T');
             }
         } elseif ($args && is_array($args)) {
             $args['limit'] = 1;
             if (!isset($args['from'])) {
-                $args['from'] = $model->getTableName().' T';
+                $args['from'] = $model->getTableName() . ' T';
             }
             $query = new Query($args);
         } elseif (!$args) {
             $query = new Query(
                 [
-                    'from' => $model->getTableName().' T',
+                    'from' => $model->getTableName() . ' T',
                     'limit' => 1,
                 ]);
         } else {
@@ -205,17 +206,17 @@ abstract class ActiveRecord
         if ($args && $args instanceof Query) {
             $query = $args;
             if (empty($query->from)) {
-                $query->addFrom($model->getTableName().' T');
+                $query->addFrom($model->getTableName() . ' T');
             }
         } elseif ($args && is_array($args)) {
             if (!isset($args['from'])) {
-                $args['from'] = $model->getTableName().' T';
+                $args['from'] = $model->getTableName() . ' T';
             }
             $query = new Query($args);
         } elseif (!$args) {
             $query = new Query(
                 [
-                    'from' => $model->getTableName().' T',
+                    'from' => $model->getTableName() . ' T',
                 ]);
         } else {
             throw new Exception(translate('Bad arguments'), 500, Exception::BADARGUMENTS);
@@ -250,27 +251,36 @@ abstract class ActiveRecord
 
         if ($args && $args instanceof Query) {
             $query = $args;
+            //$query->from = " (SELECT T.".$model->getPkName()." FROM ".$model->getTableName()." T) TEMP";
             if (empty($query->from)) {
-                $query->addFrom($model->getTableName().' T');
+                $query->addFrom($model->getTableName() . ' T');
             }
-            $query->select = 'COUNT(*)';
+            $query->select = "T." . $model->getPkName();
         } elseif ($args && is_array($args)) {
             if (!isset($args['from'])) {
-                $args['from'] = $model->getTableName().' T';
+                $args['from'] = $model->getTableName() . ' T';
             }
             $query = new Query($args);
-            $query->select = 'COUNT(*)';
+            //$query->select = 'COUNT(*)';
+            $query->select = "T." . $model->getPkName();
         } elseif (!$args) {
             $query = new Query(
                 [
-                    'from' => $model->getTableName().' T',
-                    'select' => 'COUNT(*)',
+                    'from' => $model->getTableName() . ' T',
+                    'select' => $query->select = "T." . $model->getPkName(),
                 ]);
         } else {
             throw new Exception(translate('Bad arguments'), 500, Exception::BADARGUMENTS);
         }
 
-        $stmt = $model->getDB()->prepare($query->toSql());
+        $count_query = new Query(
+            [
+                'select' => 'COUNT(*)',
+                'from' => "(" . $query->toSql() . ") TC"
+            ]
+        );
+
+        $stmt = $model->getDB()->prepare($count_query->toSql());
         $stmt->execute($query->params);
         $records = $stmt->fetchColumn();
 
@@ -298,7 +308,7 @@ abstract class ActiveRecord
     protected function update()
     {
         if ($this->isDirty()) {
-            $sql = 'UPDATE '.$this->getTableName().' SET ';
+            $sql = 'UPDATE ' . $this->getTableName() . ' SET ';
             $data = [];
             $params = [];
             $pk_name = $this->getPkName();
@@ -322,7 +332,7 @@ abstract class ActiveRecord
                 }
 
                 if ($this->{$property->getName()} instanceof Expression) {
-                    $data[] = "`{$property->getName()}` = ".$this->{$property->getName()}->toSql();
+                    $data[] = "`{$property->getName()}` = " . $this->{$property->getName()}->toSql();
                 } else {
                     $data[] = "`{$property->getName()}` = :{$property->getName()}";
                     $params[":{$property->getName()}"] = $this->{$property->getName()};
@@ -356,10 +366,15 @@ abstract class ActiveRecord
         return true;
     }
 
+    /**
+     * @return bool
+     *
+     * @throws Exception
+     */
     protected function insert()
     {
         if ($this->isDirty()) {
-            $sql = 'INSERT INTO '.$this->getTableName().'  SET ';
+            $sql = 'INSERT INTO ' . $this->getTableName() . '  SET ';
             $data = [];
             $params = [];
 
@@ -368,7 +383,7 @@ abstract class ActiveRecord
             foreach ((new \ReflectionObject($this))->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
                 if ($this->{$property->getName()}) {
                     if ($this->{$property->getName()} instanceof Expression) {
-                        $data[] = "`{$property->getName()}` = ".$this->{$property->getName()}->toSql();
+                        $data[] = "`{$property->getName()}` = " . $this->{$property->getName()}->toSql();
                     } else {
                         $data[] = "`{$property->getName()}` = :{$property->getName()}";
                         $params[":{$property->getName()}"] = $this->{$property->getName()};
@@ -398,9 +413,14 @@ abstract class ActiveRecord
         return true;
     }
 
+    /**
+     * @return bool
+     *
+     * @throws Exception
+     */
     public function delete()
     {
-        $sql = 'DELETE FROM '.$this->getTableName().' ';
+        $sql = 'DELETE FROM ' . $this->getTableName() . ' ';
 
         $pk_name = $this->getPkName();
         $params = [];

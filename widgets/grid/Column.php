@@ -47,6 +47,7 @@ class Column extends Widget
      */
     protected function renderHeader()
     {
+        return '<th>'.$this->renderCaption().$this->renderFilter().'</th>';
     }
 
     /**
@@ -54,12 +55,18 @@ class Column extends Widget
      */
     protected function renderFilter()
     {
-        $return = '';
+        $return = '<div class="filter">';
         if (isset($this->_filter)) {
-            $return = $this->_filter->render();
+            $return .= $this->_filter->render();
         }
+        $return .= '</div>';
 
         return $return;
+    }
+
+    protected function renderCaption()
+    {
+        return '<div class="caption">'.$this->_header.'</div>';
     }
 
     /**
@@ -67,6 +74,17 @@ class Column extends Widget
      */
     protected function renderContent()
     {
+        $value = '';
+
+        if (is_callable($this->_value)) {
+            $value = call_user_func_array($this->_value, [$this->_record]);
+        } else {
+            if (property_exists($this->_record, $this->_value)) {
+                $value = $this->_record->{$this->_value};
+            }
+        }
+
+        return "<td>{$value}</td>";
     }
 
     /**
@@ -100,5 +118,10 @@ class Column extends Widget
         }
 
         return $return;
+    }
+
+    public function bindRecord($record)
+    {
+        $this->_record = $record;
     }
 }

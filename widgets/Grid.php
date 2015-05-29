@@ -13,14 +13,16 @@
 
 namespace cordillera\widgets;
 
-use cordillera\middlewares\db\adapters\sql\DataProvider;
+use cordillera\middlewares\db\ActiveDataProvider;
 use cordillera\middlewares\Exception;
+use cordillera\widgets\grid\Filter;
 use cordillera\widgets\grid\Column;
+use cordillera\base\interfaces\DataProvider as DataProviderInterface;
 
 class Grid extends Widget
 {
     /**
-     * @var DataProvider
+     * @var ActiveDataProvider
      */
     protected $_data_provider;
 
@@ -36,44 +38,66 @@ class Grid extends Widget
      */
     protected function setup(array $config = [])
     {
-        parent::setup($config);
         if (!isset($config['data_provider'])) {
             throw new Exception(translate('{data_provider} must be a DatapPovider objetc'), 500, Exception::BADARGUMENTS);
-        } elseif (isset($config['data_provider']) && !($config['data_provider'] instanceof DataProvider)) {
+        } elseif (isset($config['data_provider']) && !($config['data_provider'] instanceof DataProviderInterface)) {
             throw new Exception(translate('{data_provider} must be a DatapPovider objetc'), 500, Exception::BADARGUMENTS);
         }
+
+        if (!isset($config['columns'])) {
+            throw new Exception(translate('{columns} must be an array type Column[]'), 500, Exception::BADARGUMENTS);
+        }
+
+        parent::setup($config);
+
+        $this->setupColumns();
     }
 
-    /*
-    private function setupFilters()
+    protected function setupColumns()
     {
-        foreach ($this->_filters as &$filter) {
-            $filter->html = str_replace(
-                [
-                    '{name}',
-                    '{value}',
-                    '{id}'
-                ],
-                [
-                    $this->_request_context . "[{$filter->request_param}]",
-                    isset($this->_request_params[$filter->request_param]) ? $this->_request_params[$filter->request_param] : '',
-                    strtolower($this->_request_context . "_" . $filter->request_param . "_id")
-                ], $filter->html);
+        if ($this->_data_provider->isActiveRecord()) {
+            foreach ($this->_columns as $key => $column) {
+                if (is_string($column) && property_exists($this->_data_provider->data_source, $column)) {
+                    if ((new \ReflectionProperty($this->_data_provider->data_source, $column))->isPublic()) {
+                        $this->_columns[$key] = new Column([
+                            'attribute' => $column,
+                            'header' => ucfirst($column),
+                            'value' => $column,
+                            'filter' => new Filter([
+                                'html_options' => [
+                                    'name' => (new \ReflectionClass($this->_data_provider->data_source))->getShortName()."[{$column}]",
+                                    'type' => 'text',
+                                    'class' => 'form-control',
+                                    'value' => (isset($this->_data_provider->request_params[$column]) ?
+                                        $this->_data_provider->request_params[$column]
+                                        : ''
+                                    ),
+                                    'placeholder' => translate('filter by %s', [$column]),
+                                ],
+                            ]),
+                        ]);
+                    }
+                } else {
+                    unset($this->_columns[$key]);
+                }
+            }
         }
     }
-    */
 
     /**
      * @return string
      */
     public function renderHeaders()
     {
-        /*
-        foreach($this->_columns as $column){
+        $html = '<thead><tr>';
 
+        foreach ($this->_columns as $column) {
+            $html .= $column->render('header');
         }
-        */
-        return '<div>headers</div>';
+
+        $html .= '</tr></thead>';
+
+        return $html;
     }
 
     /**
@@ -97,7 +121,19 @@ class Grid extends Widget
      */
     public function renderBody()
     {
-        return '<div>body</div>';
+        $html = '<tbody>';
+        foreach ($this->_data_provider->getData() as $record) {
+            $html .= '<tr>';
+            foreach ($this->_columns as $column) {
+                $column->bindRecord($record);
+                $html .= $column->render();
+            }
+            $html .= '</tr>';
+        }
+
+        $html .= '</tbody>';
+
+        return $html;
     }
 
     /**
@@ -108,7 +144,7 @@ class Grid extends Widget
         if ($this->_renderer) {
             return call_user_func_array($this->_renderer, [$this]);
         } else {
-            return $this->renderHeaders().$this->renderBody().$this->renderSummaries().$this->renderPagination();
+            return '<table class="table table-hover">'.$this->renderHeaders().$this->renderBody().'</table>';
         }
     }
 }

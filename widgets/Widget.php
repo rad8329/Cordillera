@@ -15,7 +15,6 @@ namespace cordillera\widgets;
 
 use cordillera\base\interfaces\Display;
 use cordillera\middlewares\Exception;
-use cordillera\middlewares\Layout;
 
 abstract class Widget implements Display
 {
@@ -40,11 +39,6 @@ abstract class Widget implements Display
     protected $_template = 'widgets/views/layout';
 
     /**
-     * @var Layout
-     */
-    public $layout;
-
-    /**
      * @var string
      */
     public $id;
@@ -54,6 +48,7 @@ abstract class Widget implements Display
      */
     public function __construct(array $config = [])
     {
+        static::$_counter++;
         $this->setup($config);
     }
 
@@ -66,10 +61,6 @@ abstract class Widget implements Display
     {
         if (isset($config['renderer']) && (!($config['renderer'] instanceof \Closure) && !is_callable($config['renderer']))) {
             throw new Exception(translate('{renderer} must be callable'), 500, Exception::BADARGUMENTS);
-        }
-
-        if (isset($config['layout']) && !($config['layout'] instanceof Layout)) {
-            throw new Exception(translate('{layout} must be instace of Layout objetc'), 500, Exception::BADARGUMENTS);
         }
 
         if (isset($config['template']) && !is_string($config['template'])) {
@@ -133,19 +124,6 @@ abstract class Widget implements Display
     }
 
     /**
-     * @param array $config
-     *
-     * @return Widget
-     */
-    public static function widget(array $config = [])
-    {
-        static::$_counter++;
-        $widget = new static($config);
-
-        return $widget;
-    }
-
-    /**
      * @param array $attributes
      *
      * @return string
@@ -177,5 +155,13 @@ abstract class Widget implements Display
     public function render()
     {
         return $this->renderFile($this->_template);
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->render();
     }
 }

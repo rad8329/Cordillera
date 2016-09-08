@@ -13,6 +13,8 @@
 
 namespace cordillera\middlewares;
 
+use cordillera\helpers\Crypt;
+
 class Session extends \SessionHandler
 {
     /**
@@ -81,13 +83,27 @@ class Session extends \SessionHandler
         }
     }
 
+    protected function setUseCookies()
+    {
+        if (session_id() === '') {
+            ini_set('session.cookie_secure', 1);
+            ini_set('session.use_cookies', 1);
+            ini_set('session.use_only_cookies', 1);
+        }
+    }
+
+    protected function setSaveHandler()
+    {
+        if (session_id() === '') {
+            ini_set('session.save_handler', 'files');
+        }
+    }
+
     protected function setup()
     {
-        ini_set('session.use_cookies', 1);
-        ini_set('session.use_only_cookies', 1);
+        $this->setUseCookies();
 
         session_name($this->_name);
-
         session_set_cookie_params(
             $this->_cookie['lifetime'],
             $this->_cookie['path'],
@@ -96,8 +112,17 @@ class Session extends \SessionHandler
             $this->_cookie['httponly']
         );
 
-        ini_set('session.save_handler', 'files');
-        session_set_save_handler($this, true);
+        $this->setSaveHandler();
+
+        //session_set_save_handler($this, false);
+        @session_set_save_handler(
+            [$this, 'open'],
+            [$this, 'close'],
+            [$this, 'read'],
+            [$this, 'write'],
+            [$this, 'destroy'],
+            [$this, 'gc']
+        );
         session_save_path($this->_path);
 
         $this->start();
@@ -118,6 +143,11 @@ class Session extends \SessionHandler
         return false;
     }
 
+    /**
+     * @param string $id
+     *
+     * @return bool
+     */
     public function destroy($id)
     {
         $file = $this->_path.'sess_'.$id;
@@ -162,7 +192,7 @@ class Session extends \SessionHandler
      */
     public function read($id)
     {
-        return mcrypt_decrypt(MCRYPT_3DES, $this->_key, parent::read($id), MCRYPT_MODE_ECB);
+        return mcrypt_decrypt(MCRYPT_3DES, Crypt::pad($this->_key), parent::read($id), MCRYPT_MODE_ECB);
     }
 
     /**
@@ -175,7 +205,7 @@ class Session extends \SessionHandler
     {
         return parent::write(
             $id,
-            mcrypt_encrypt(MCRYPT_3DES, $this->_key, $data, MCRYPT_MODE_ECB)
+            mcrypt_encrypt(MCRYPT_3DES, Crypt::pad($this->_key), $data, MCRYPT_MODE_ECB)
         );
     }
 
@@ -277,7 +307,7 @@ class Session extends \SessionHandler
     public function clean($name)
     {
         $parsed = implode('', array_map(function ($name) {
-                return ("['$name']");
+                return "['$name']";
             }, explode('.', $name))
         );
 

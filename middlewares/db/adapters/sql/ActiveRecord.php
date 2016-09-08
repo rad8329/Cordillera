@@ -163,18 +163,18 @@ abstract class ActiveRecord implements ActiveRecordInterface
             $query->limit = 1;
 
             if (empty($query->from)) {
-                $query->addFrom($model->getTableName() . ' T');
+                $query->addFrom($model->getTableName().' T');
             }
         } elseif ($args && is_array($args)) {
             $args['limit'] = 1;
             if (!isset($args['from'])) {
-                $args['from'] = $model->getTableName() . ' T';
+                $args['from'] = $model->getTableName().' T';
             }
             $query = new Query($args);
         } elseif (!$args) {
             $query = new Query(
                 [
-                    'from' => $model->getTableName() . ' T',
+                    'from' => $model->getTableName().' T',
                     'limit' => 1,
                 ]);
         } else {
@@ -206,17 +206,17 @@ abstract class ActiveRecord implements ActiveRecordInterface
         if ($args && $args instanceof Query) {
             $query = $args;
             if (empty($query->from)) {
-                $query->addFrom($model->getTableName() . ' T');
+                $query->addFrom($model->getTableName().' T');
             }
         } elseif ($args && is_array($args)) {
             if (!isset($args['from'])) {
-                $args['from'] = $model->getTableName() . ' T';
+                $args['from'] = $model->getTableName().' T';
             }
             $query = new Query($args);
         } elseif (!$args) {
             $query = new Query(
                 [
-                    'from' => $model->getTableName() . ' T',
+                    'from' => $model->getTableName().' T',
                 ]);
         } else {
             throw new Exception(translate('Bad arguments'), 500, Exception::BADARGUMENTS);
@@ -253,21 +253,21 @@ abstract class ActiveRecord implements ActiveRecordInterface
             $query = $args;
             //$query->from = " (SELECT T.".$model->getPkName()." FROM ".$model->getTableName()." T) TEMP";
             if (empty($query->from)) {
-                $query->addFrom($model->getTableName() . ' T');
+                $query->addFrom($model->getTableName().' T');
             }
-            $query->select = "T." . $model->getPkName();
+            $query->select = 'T.'.$model->getPkName();
         } elseif ($args && is_array($args)) {
             if (!isset($args['from'])) {
-                $args['from'] = $model->getTableName() . ' T';
+                $args['from'] = $model->getTableName().' T';
             }
             $query = new Query($args);
             //$query->select = 'COUNT(*)';
-            $query->select = "T." . $model->getPkName();
+            $query->select = 'T.'.$model->getPkName();
         } elseif (!$args) {
             $query = new Query(
                 [
-                    'from' => $model->getTableName() . ' T',
-                    'select' => $query->select = "T." . $model->getPkName(),
+                    'from' => $model->getTableName().' T',
+                    'select' => 'T.'.$model->getPkName(),
                 ]);
         } else {
             throw new Exception(translate('Bad arguments'), 500, Exception::BADARGUMENTS);
@@ -276,7 +276,7 @@ abstract class ActiveRecord implements ActiveRecordInterface
         $count_query = new Query(
             [
                 'select' => 'COUNT(*)',
-                'from' => "(" . $query->toSql() . ") TC"
+                'from' => '('.$query->toSql().') TC',
             ]
         );
 
@@ -308,7 +308,7 @@ abstract class ActiveRecord implements ActiveRecordInterface
     protected function update()
     {
         if ($this->isDirty()) {
-            $sql = 'UPDATE ' . $this->getTableName() . ' SET ';
+            $sql = 'UPDATE '.$this->getTableName().' SET ';
             $data = [];
             $params = [];
             $pk_name = $this->getPkName();
@@ -332,7 +332,7 @@ abstract class ActiveRecord implements ActiveRecordInterface
                 }
 
                 if ($this->{$property->getName()} instanceof Expression) {
-                    $data[] = "`{$property->getName()}` = " . $this->{$property->getName()}->toSql();
+                    $data[] = "`{$property->getName()}` = ".$this->{$property->getName()}->toSql();
                 } else {
                     $data[] = "`{$property->getName()}` = :{$property->getName()}";
                     $params[":{$property->getName()}"] = $this->{$property->getName()};
@@ -374,7 +374,7 @@ abstract class ActiveRecord implements ActiveRecordInterface
     protected function insert()
     {
         if ($this->isDirty()) {
-            $sql = 'INSERT INTO ' . $this->getTableName() . '  SET ';
+            $sql = 'INSERT INTO '.$this->getTableName().'  SET ';
             $data = [];
             $params = [];
 
@@ -383,7 +383,7 @@ abstract class ActiveRecord implements ActiveRecordInterface
             foreach ((new \ReflectionObject($this))->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
                 if ($this->{$property->getName()}) {
                     if ($this->{$property->getName()} instanceof Expression) {
-                        $data[] = "`{$property->getName()}` = " . $this->{$property->getName()}->toSql();
+                        $data[] = "`{$property->getName()}` = ".$this->{$property->getName()}->toSql();
                     } else {
                         $data[] = "`{$property->getName()}` = :{$property->getName()}";
                         $params[":{$property->getName()}"] = $this->{$property->getName()};
@@ -420,7 +420,7 @@ abstract class ActiveRecord implements ActiveRecordInterface
      */
     public function delete()
     {
-        $sql = 'DELETE FROM ' . $this->getTableName() . ' ';
+        $sql = 'DELETE FROM '.$this->getTableName().' ';
 
         $pk_name = $this->getPkName();
         $params = [];

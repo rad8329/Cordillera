@@ -48,7 +48,7 @@ class DI
 
     /**
      * @param $container
-     * @param callable $definition
+     * @param callable|\Closure $definition
      */
     public function __set($container, \Closure $definition)
     {

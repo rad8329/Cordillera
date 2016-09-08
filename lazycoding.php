@@ -21,7 +21,7 @@ function app()
 
 /**
  * @param string $text
- * @param array $params
+ * @param array  $params
  * @param string $source
  *
  * @return string

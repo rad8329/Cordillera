@@ -92,7 +92,7 @@ class Connection extends PDO
      * @param string $statement
      * @param array  $driver_options
      *
-     * @return Statement
+     * @return Statement|\PDOStatement
      *
      * @throws Exception
      */

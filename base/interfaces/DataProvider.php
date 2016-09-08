@@ -33,7 +33,6 @@ interface DataProvider
     public function getTotalRecordsPage();
 
     /**
-     * @return null
      */
     public function export();
 

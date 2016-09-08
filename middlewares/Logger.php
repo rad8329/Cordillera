@@ -198,7 +198,7 @@ class Logger extends AbstractLogger
                 throw new Exception('The file could not be written', 500, Exception::FILESYSTEM);
             } else {
                 $this->_last_line = trim($message);
-                $this->_line_count++;
+                ++$this->_line_count;
 
                 if ($this->_flush_frequency && $this->_line_count % $this->_flush_frequency === 0) {
                     fflush($this->_file_handler);

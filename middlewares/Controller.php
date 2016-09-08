@@ -161,7 +161,7 @@ class Controller implements ControllerIterface
     }
 
     /**
-     * @param callable $definition
+     * @param callable|\Closure $definition
      */
     public function filters(\Closure $definition)
     {
@@ -169,7 +169,7 @@ class Controller implements ControllerIterface
     }
 
     /**
-     * @param callable $definition
+     * @param callable|\Closure $definition
      */
     public function put(\Closure $definition)
     {
@@ -177,7 +177,7 @@ class Controller implements ControllerIterface
     }
 
     /**
-     * @param callable $definition
+     * @param callable|\Closure $definition
      */
     public function get(\Closure $definition)
     {
@@ -185,7 +185,7 @@ class Controller implements ControllerIterface
     }
 
     /**
-     * @param callable $definition
+     * @param callable|\Closure $definition
      */
     public function post(\Closure $definition)
     {
@@ -193,7 +193,7 @@ class Controller implements ControllerIterface
     }
 
     /**
-     * @param callable $definition
+     * @param callable|\Closure $definition
      */
     public function delete(\Closure $definition)
     {
@@ -201,7 +201,7 @@ class Controller implements ControllerIterface
     }
 
     /**
-     * @param callable $definition
+     * @param callable|\Closure $definition
      */
     public function head(\Closure $definition)
     {
@@ -209,7 +209,7 @@ class Controller implements ControllerIterface
     }
 
     /**
-     * @param callable $definition
+     * @param callable|\Closure $definition
      */
     public function options(\Closure $definition)
     {
@@ -217,7 +217,7 @@ class Controller implements ControllerIterface
     }
 
     /**
-     * @param callable $definition
+     * @param callable|\Closure $definition
      */
     public function trace(\Closure $definition)
     {

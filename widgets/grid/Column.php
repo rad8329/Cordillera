@@ -92,6 +92,7 @@ class Column extends Widget
      */
     protected function renderSummary()
     {
+        return;
     }
 
     /**

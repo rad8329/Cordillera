@@ -261,7 +261,7 @@ class Router implements RouterInterface
                         if (false === $regex && $c !== '/' && (!isset($request_url[$j]) || $c !== $request_url[$j])) {
                             continue 2;
                         }
-                        $j++;
+                        ++$j;
                     }
                     $route .= $_route[$i++];
                 }

@@ -62,7 +62,7 @@ class ActiveRecord extends ActiveDataProvider
      */
     public function getTotalRecords()
     {
-        $query = clone($this->query);
+        $query = clone $this->query;
         $query->limit = '';
 
         return $this->data_source->count($query);

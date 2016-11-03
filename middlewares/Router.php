@@ -1,16 +1,5 @@
 <?php
 
-/*
- * This file is part of the Cordillera framework.
- *
- * (c) Robert Adrián Díaz <rad8329@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * Made with love in Medellín
- */
-
 namespace cordillera\middlewares;
 
 use cordillera\base\Cordillera;
@@ -125,7 +114,7 @@ class Router implements RouterInterface
      *
      * @param string $route   The route regex, custom regex must start with an @.
      *                        You can use multiple pre-set regex filters, like [i:id]
-     * @param mixed  $handler The handler target where this route should point to.
+     * @param mixed  $handler The handler target where this route should point to
      *
      * @throws Exception
      */
@@ -143,10 +132,10 @@ class Router implements RouterInterface
      *
      * Generate the URL for a named route. Replace regexes with supplied parameters
      *
-     * @param string $handler The name of the handler.
-     * @param array @params Associative array of parameters to replace placeholders with.
+     * @param string $handler The name of the handler
+     * @param array @params Associative array of parameters to replace placeholders with
      *
-     * @return string The URL of the route with named parameters in place.
+     * @return string The URL of the route with named parameters in place
      */
     public function generate($handler, array $params = [])
     {
@@ -198,7 +187,7 @@ class Router implements RouterInterface
      *
      * @param string $request_url
      *
-     * @return array|bool Array with route information on success, false on failure (no match).
+     * @return array|bool Array with route information on success, false on failure (no match)
      */
     public function match($request_url = null)
     {
@@ -209,7 +198,6 @@ class Router implements RouterInterface
             $request_url = $request['h'];
             unset($request['h']);
         } else {
-
             // set Request Url if it isn't passed as parameter
             if ($request_url === null) {
                 $request_url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';

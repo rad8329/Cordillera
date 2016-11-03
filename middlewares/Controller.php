@@ -1,16 +1,5 @@
 <?php
 
-/*
- * This file is part of the Cordillera framework.
- *
- * (c) Robert Adrián Díaz <rad8329@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * Made with love in Medellín
- */
-
 namespace cordillera\middlewares;
 
 use cordillera\base\Cordillera;
@@ -108,7 +97,8 @@ class Controller implements ControllerIterface
         if (!in_array($this->response_type, ['json', 'html'])) {
             throw new Exception(
                 translate('The response type must be json or html'),
-                500, Exception::VIEW
+                500,
+                Exception::VIEW
             );
         }
 
@@ -136,8 +126,7 @@ class Controller implements ControllerIterface
 
         if ($response instanceof View && $this->response_type == 'html' && !$this->is_rest) {
             $this->response->raw($response->render());
-        } elseif (
-            ($this->is_rest || $this->response_type == 'json' || is_array($response)) ||
+        } elseif (($this->is_rest || $this->response_type == 'json' || is_array($response)) ||
             (is_object($response) && !($response instanceof View))
         ) {
             if ($response instanceof View) {

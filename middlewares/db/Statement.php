@@ -1,16 +1,5 @@
 <?php
 
-/*
- * This file is part of the Cordillera framework.
- *
- * (c) Robert Adrián Díaz <rad8329@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * Made with love in Medellín
- */
-
 namespace cordillera\middlewares\db;
 
 use cordillera\middlewares\Exception;
@@ -58,8 +47,7 @@ class Statement extends \PDOStatement
                     'statement' => $this->pdo->_last_statement,
                     'input_parameters' => $input_parameters,
                     'error' => $e->getMessage(),
-                ]
-            );
+                ]);
             throw new Exception($e->getMessage(), 500, Exception::QUERY);
         }
     }

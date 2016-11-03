@@ -1,16 +1,5 @@
 <?php
 
-/*
- * This file is part of the Cordillera framework.
- *
- * (c) Robert Adrián Díaz <rad8329@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * Made with love in Medellín
- */
-
 namespace cordillera\middlewares\filters\request;
 
 use cordillera\base\interfaces\Filter as FilterInterface;
@@ -28,8 +17,7 @@ class Filter implements FilterInterface
      */
     public function assertJsonContentType()
     {
-        if (
-            !isset($_SERVER['CONTENT_TYPE']) ||
+        if (!isset($_SERVER['CONTENT_TYPE']) ||
             (isset($_SERVER['CONTENT_TYPE']) && !preg_match('/^application\/json/', $_SERVER['CONTENT_TYPE']))
         ) {
             throw new Exception(translate('Bad request'), 400, Exception::BADREQUEST);
@@ -47,8 +35,7 @@ class Filter implements FilterInterface
             $payload = app()->request->payload(app()->request->csrf_id);
             $post = app()->request->post(app()->request->csrf_id);
 
-            if (
-                // POST data
+            if (// POST data
                 (empty($payload) && $post != $request->csrf_value) ||
                 // Payload data
                 (!empty($payload) && $payload != $request->csrf_value)

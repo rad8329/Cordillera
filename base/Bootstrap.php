@@ -1,22 +1,11 @@
 <?php
 
-/*
- * This file is part of the Cordillera framework.
- *
- * (c) Robert Adrián Díaz <rad8329@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * Made with love in Medellín
- */
-
 namespace cordillera\base;
 
 use cordillera\middlewares\Config;
 use cordillera\middlewares\Exception;
 
-class  Bootstrap
+class Bootstrap
 {
     /**
      * @param array $config
@@ -98,18 +87,22 @@ class  Bootstrap
         });
 
         Cordillera::$instance->share('auth', function () use ($classmap, $classmap_source) {
-            return Cordillera::factory($classmap['auth'],
-                [app()->session], $classmap_source['auth']);
+            return Cordillera::factory(
+                $classmap['auth'],
+                [app()->session],
+                $classmap_source['auth']
+            );
         });
 
         Cordillera::$instance->share('lang', function () use ($classmap, $classmap_source) {
-            return Cordillera::factory($classmap['lang'],
+            return Cordillera::factory(
+                $classmap['lang'],
                 [app()->config->get('language', 'en')],
-                $classmap_source['lang']);
+                $classmap_source['lang']
+            );
         });
 
         Cordillera::$instance->share('response', function () use ($classmap, $classmap_source) {
-
             return Cordillera::factory($classmap['response'], [], $classmap_source['response']);
         });
     }

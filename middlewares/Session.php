@@ -1,16 +1,5 @@
 <?php
 
-/*
- * This file is part of the Cordillera framework.
- *
- * (c) Robert Adrián Díaz <rad8329@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * Made with love in Medellín
- */
-
 namespace cordillera\middlewares;
 
 use cordillera\helpers\Crypt;
@@ -307,9 +296,8 @@ class Session extends \SessionHandler
     public function clean($name)
     {
         $parsed = implode('', array_map(function ($name) {
-                return "['$name']";
-            }, explode('.', $name))
-        );
+            return "['$name']";
+        }, explode('.', $name)));
 
         if ($parsed) {
             eval('if(isset($_SESSION'.$parsed.')) unset($_SESSION'.$parsed.');');

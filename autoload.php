@@ -1,16 +1,5 @@
 <?php
 
-/*
- * This file is part of the Cordillera framework.
- *
- * (c) Robert Adrián Díaz <rad8329@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * Made with love in Medellín
- */
-
 spl_autoload_register(function ($class) {
 
     // project-specific namespace prefix
@@ -20,7 +9,6 @@ spl_autoload_register(function ($class) {
     $len = strlen($prefix);
 
     if (strncmp($prefix, $class, $len) !== 0) {
-
         // replace the namespace prefix with the base directory, replace namespace
         // separators with directory separators in the relative class name, append
         // with .php

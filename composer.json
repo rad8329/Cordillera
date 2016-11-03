@@ -1,9 +1,8 @@
 {
   "name": "rad8329/cordillera",
-  "description": "PHP micro framework (MVC)",
+  "description": "PHP lightweight framework (MVC)",
   "version": "dev-master",
-  "license": "BSD-3-Clause",
-  "homepage": "https://github.com/rad8329",
+  "license": "MIT",
   "minimum-stability": "dev",
   "keywords": [
     "php",
@@ -13,7 +12,7 @@
   "authors": [
     {
       "name": "Robert Adrián Díaz",
-      "email": "rad8329@gmail.co"
+      "email": "rad8329@gmail.com"
     }
   ],
   "require": {

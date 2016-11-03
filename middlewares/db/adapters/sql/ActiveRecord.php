@@ -1,16 +1,5 @@
 <?php
 
-/*
- * This file is part of the Cordillera framework.
- *
- * (c) Robert Adrián Díaz <rad8329@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * Made with love in Medellín
- */
-
 namespace cordillera\middlewares\db\adapters\sql;
 
 use cordillera\base\traits\Form;
@@ -176,7 +165,8 @@ abstract class ActiveRecord implements ActiveRecordInterface
                 [
                     'from' => $model->getTableName().' T',
                     'limit' => 1,
-                ]);
+                ]
+            );
         } else {
             throw new Exception(translate('Bad arguments'), 500, Exception::BADARGUMENTS);
         }
@@ -217,7 +207,8 @@ abstract class ActiveRecord implements ActiveRecordInterface
             $query = new Query(
                 [
                     'from' => $model->getTableName().' T',
-                ]);
+                ]
+            );
         } else {
             throw new Exception(translate('Bad arguments'), 500, Exception::BADARGUMENTS);
         }
@@ -268,7 +259,8 @@ abstract class ActiveRecord implements ActiveRecordInterface
                 [
                     'from' => $model->getTableName().' T',
                     'select' => 'T.'.$model->getPkName(),
-                ]);
+                ]
+            );
         } else {
             throw new Exception(translate('Bad arguments'), 500, Exception::BADARGUMENTS);
         }

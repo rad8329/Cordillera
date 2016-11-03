@@ -1,20 +1,10 @@
 <?php
 
-/*
- * This file is part of the Cordillera framework.
- *
- * (c) Robert Adrián Díaz <rad8329@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * Made with love in Medellín
- */
-
 use cordillera\middlewares\Layout;
 
 /* @var string $content */
 /* @var \cordillera\middlewares\Layout $this */
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -47,20 +37,20 @@ use cordillera\middlewares\Layout;
             </button>
             <a class="navbar-brand" href="<?= app()->request->home ?>">Cordillera framework</a>
         </div>
-		<div class="collapse navbar-collapse" id="bs-main-navbar-collapse">
+        <div class="collapse navbar-collapse" id="bs-main-navbar-collapse">
         </div>
         <!-- /.navbar-collapse -->
     </div>
     <!-- /.container -->
 </nav>
-<?php if (app()->session->get('flash.success')): ?>
+<?php if (app()->session->get('flash.success')) : ?>
     <div class="container">
         <div class="alert alert-info" role="alert">
             <?= app()->session->get('flash.success') ?>
         </div>
     </div>
 <?php endif ?>
-<?php if (app()->session->get('flash.error')): ?>
+<?php if (app()->session->get('flash.error')) : ?>
     <div class="container">
         <div class="alert alert-danger" role="alert">
             <?= app()->session->get('flash.error') ?>

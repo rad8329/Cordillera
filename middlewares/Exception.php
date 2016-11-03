@@ -1,16 +1,5 @@
 <?php
 
-/*
- * This file is part of the Cordillera framework.
- *
- * (c) Robert Adrián Díaz <rad8329@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * Made with love in Medellín
- */
-
 namespace cordillera\middlewares;
 
 use cordillera\base\interfaces\Exception as ExceptionInterface;
@@ -96,8 +85,8 @@ class Exception extends \Exception implements ExceptionInterface
             $html .= "<strong>{$this->getMessage()}</strong>";
             $html .= '<div class="trace">';
             $html .= implode("\n", array_map(function ($trace) {
-                    return "<div>{$trace}</div>";
-                }, $this->getAllTraces())).'</div>';
+                return "<div>{$trace}</div>";
+            }, $this->getAllTraces())).'</div>';
         } else {
             $html = $this->getMessage();
         }

@@ -1,16 +1,5 @@
 <?php
 
-/*
- * This file is part of the Cordillera framework.
- *
- * (c) Robert Adrián Díaz <rad8329@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * Made with love in Medellín
- */
-
 namespace cordillera\widgets;
 
 use cordillera\base\interfaces\Display;
@@ -131,9 +120,8 @@ abstract class Widget implements Display
     protected function bind(array $attributes = [])
     {
         return implode(' ', array_map(function ($attribute, $value) {
-                return "{$attribute}=\"{$value}\"";
-            }, array_keys($attributes), $attributes)
-        );
+            return "{$attribute}=\"{$value}\"";
+        }, array_keys($attributes), $attributes));
     }
 
     /**

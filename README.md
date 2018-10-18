@@ -1,10 +1,10 @@
 # Cordillera
 PHP lightweight framework (MVC)
 
-##REQUIREMENTS
+#REQUIREMENTS
 
 - PHP 5.4.X
 - PDO
 
-##NOTE
+#NOTE
 This framework was an educational attempt

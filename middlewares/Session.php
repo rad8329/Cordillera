@@ -125,7 +125,7 @@ class Session extends \SessionHandler
     {
         if (session_id() === '') {
             if (session_start()) {
-                return mt_rand(0, 4) === 0 ? $this->refresh() : true; // 1/5
+                return true;
             }
         }
 
